@@ -20,7 +20,7 @@ definition  text             "definition" text NOT NULL
 
 Import will vary based on the language you are using: 
 
-* [Python](###Python) 
+* [Python](#Python) 
 
 ## Language specific instructions
 
