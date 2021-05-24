@@ -8,6 +8,14 @@ OPTED is a public domain English word list dictionary, based on the public domai
 
 Since the dictionary is based on 1913 edition, it does not include any modern words (Yet!, but in a future release will include the database Princeton University's [WordNet](https://wordnet.princeton.edu/download/current-version).
 
+## Getting Started
+
+You can clone the repository by running:
+
+`git clone https://github.com/justgoodin/English-Dictionary-Formatted.git`
+
+Find the [usage instructions here](#Instructions).
+
 ## Data Structure
 
 The dictionary has 3 fields
@@ -16,15 +24,27 @@ The dictionary has 3 fields
 2. word type
 3. definition
 
+### Database Schema
+
+The table is named 'entries' and has the following schema
+
+```sqlite
+Column      Type             Schema
+------      --------------   -------------------------------
+word        varchar(25)      "word" varchar(25) NOT NULL
+wordtype    varchar(20)      "wordtype" varchar(20) NOT NULL  
+definition  text             "definition" text NOT NULL
+```
+
 ## Dictionary Format & Repository Structure
 
 There are 3 formats available as of now
 
-1. [CSV](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/csv): A single file with all the words in standard CSV format
-2. [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/sqlite3): A single file formatted as a SQLITE3 database
-3. [MYSQL](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/mysql): MySQL dump that can be imported directly inside MySQL / MariaDB
-
-A brief overview of how to work with them in provided in respective README documents.
+| Format & Link                                                | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [CSV](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/csv) | A single file with all the words in standard CSV format      |
+| [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/sqlite3) | A single file formatted as a SQLITE3 database                |
+| [MYSQL](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/mysql) | MySQL dump that can be imported directly inside MySQL / MariaDB |
 
 ## Credits
 

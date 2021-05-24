@@ -1,9 +1,3 @@
-## Getting Started
-
-You can clone the repository by running
-
-`git clone https://github.com/justgoodin/English-Dictionary-Formatted.git`
-
 ## Database Schema
 
 The table is named 'entries' and has the following schema
