@@ -20,11 +20,11 @@ The dictionary has 3 fields
 
 There are 3 formats available as of now
 
-1. CSV: A single file with all the words in standard CSV format
-2. SQLITE3: A single file formatted as a SQLITE3 database
-3. MYSQL: MySQL dump that can be imported directly inside MySQL / MariaDB
+1. [CSV](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/csv): A single file with all the words in standard CSV format
+2. [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/sqlite3): A single file formatted as a SQLITE3 database
+3. [MYSQL](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/mysql): MySQL dump that can be imported directly inside MySQL / MariaDB
 
 
 
-
+s
 
