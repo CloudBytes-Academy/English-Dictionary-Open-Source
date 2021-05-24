@@ -1,1 +1,1 @@
-# English-Dictionary-Formatted
+# English Dictionary as CSV & SQlite3 DB
