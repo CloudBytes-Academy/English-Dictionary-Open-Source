@@ -20,11 +20,11 @@ definition  text             "definition" text NOT NULL
 
 Import will vary based on the language you are using: 
 
-* [Python](#Python) 
+* [Python SQLite3](#Python) 
 
 ## Language specific instructions
 
-### Python
+### Python SQLite3
 
 To import in a python script, follow the instructions below
 
