@@ -16,7 +16,7 @@ You can clone the repository by running:
 git clone https://github.com/justgoodin/English-Dictionary-Formatted.git
 ```
 
-Find the [usage instructions here](#Instructions).
+Find the [usage instructions here](https://github.com/UberPython/English-Dictionary-Open-Source/blob/main/USAGE.md).
 
 ## Data Structure
 
@@ -44,15 +44,15 @@ There are 3 formats available as of now
 
 | Format & Link                                                | Description                                                  |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [CSV](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/csv) | A single file with all the words in standard CSV format      |
-| [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/sqlite3) | A single file formatted as a SQLITE3 database                |
-| [MYSQL](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/mysql) | MySQL dump that can be imported directly inside MySQL / MariaDB |
+| [CSV](https://github.com/UberPython/English-Dictionary-Open-Source/tree/main/csv) | A single file with all the words in standard CSV format      |
+| [SQLITE3](https://github.com/UberPython/English-Dictionary-Open-Source/tree/main/sqlite3) | A single file formatted as a SQLITE3 database                |
+| [MYSQL](https://github.com/UberPython/English-Dictionary-Open-Source/tree/main/mysql) | MySQL dump that can be imported directly inside MySQL / MariaDB |
 
 ## Usage Instructions
 
-| Language | Instructions are available for                               |
-| -------- | ------------------------------------------------------------ |
-| Python   | [CSV](https://github.com/justgoodin/English-Dictionary-Formatted/blob/main/USAGE.md#csv), [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/blob/main/USAGE.md#sqlite3), MYSQL |
+| Language                                                     | Instructions are available for                               |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [Python](https://github.com/UberPython/English-Dictionary-Open-Source/blob/main/USAGE.md#python) | [CSV](https://github.com/UberPython/English-Dictionary-Open-Source/blob/main/USAGE.md#csv), [SQLITE3](https://github.com/UberPython/English-Dictionary-Open-Source/blob/main/USAGE.md#sqlite3), MYSQL |
 
 ## Credits
 
