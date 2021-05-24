@@ -24,7 +24,11 @@ There are 3 formats available as of now
 2. [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/sqlite3): A single file formatted as a SQLITE3 database
 3. [MYSQL](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/mysql): MySQL dump that can be imported directly inside MySQL / MariaDB
 
+A brief overview of how to work with them in provided in respective README documents.
 
+## Credits
 
-s
+1. **[Project Gutenberg](https://www.gutenberg.org/)**: For providing the original [1913 US Webster's Unabridged Dictionary](https://www.gutenberg.org/ebooks/29765). Make sure you read the Project Gutenberg's [README](https://www.gutenberg.org/files/29765/29765-ReadMe.txt) for license and other details if you care considering using this for commercial purposes.
+2. **[x16bkkamz6rkb78](https://sourceforge.net/u/x16bkkamz6rkb78/profile/) **: For compiling the MySQL dump and releasing on [Source Forge](https://sourceforge.net/projects/mysqlenglishdictionary/).
 
+3. **[dumblob](https://github.com/dumblob)**: For providing the extraordinarily elegant [mysql2sqlite](https://github.com/dumblob/mysql2sqlite) tool for converting the MySQL dump to SQLite3. 
