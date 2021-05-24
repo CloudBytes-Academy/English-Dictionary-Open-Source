@@ -22,9 +22,9 @@ Find the [usage instructions here](#Instructions).
 
 The dictionary has 3 fields
 
-1. word
-2. word type
-3. definition
+1. **word**: In lowercase
+2. **word type**: Abbreviations describe the type, e.g. verb, noun, etc.
+**3. definition**: Definition of the word in sentence case
 
 ### Database Schema
 
