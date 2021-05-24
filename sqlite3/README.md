@@ -1,6 +1,6 @@
 ## Getting Started
 
-You can clone the repository by running \
+You can clone the repository by running
 
 `git clone https://github.com/justgoodin/English-Dictionary-Formatted.git`
 
