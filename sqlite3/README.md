@@ -20,7 +20,7 @@ definition  text             "definition" text NOT NULL
 
 Import will vary based on the language you are using: 
 
-* [Python SQLite3](#Python) 
+* [Python SQLite3](#python-sqlite3) 
 
 ## Language specific instructions
 
