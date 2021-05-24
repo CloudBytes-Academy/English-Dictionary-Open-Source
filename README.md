@@ -13,7 +13,7 @@ Since the dictionary is based on 1913 edition, it does not include any modern wo
 You can clone the repository by running:
 
 ```bash
-git clone https://github.com/justgoodin/English-Dictionary-Formatted.git
+git clone https://github.com/UberPython/English-Dictionary-Open-Source
 ```
 
 Find the [usage instructions here](https://github.com/UberPython/English-Dictionary-Open-Source/blob/main/USAGE.md).
