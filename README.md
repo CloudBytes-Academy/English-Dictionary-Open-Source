@@ -48,9 +48,9 @@ There are 3 formats available as of now
 
 ## Usage Instructions
 
-| Language | Instructions are available for |
-| -------- | ------------------------------ |
-| Python   | CSV, SQLITE3, MYSQL            |
+| Language | Instructions are available for                               |
+| -------- | ------------------------------------------------------------ |
+| Python   | CSV, [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/blob/main/USAGE.md#sqlite3), MYSQL |
 
 ## Credits
 
