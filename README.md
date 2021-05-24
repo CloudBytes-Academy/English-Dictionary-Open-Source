@@ -46,6 +46,12 @@ There are 3 formats available as of now
 | [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/sqlite3) | A single file formatted as a SQLITE3 database                |
 | [MYSQL](https://github.com/justgoodin/English-Dictionary-Formatted/tree/main/mysql) | MySQL dump that can be imported directly inside MySQL / MariaDB |
 
+## Usage Instructions
+
+| Language | Instructions are available for |
+| -------- | ------------------------------ |
+| Python   | CSV, SQLITE3, MYSQL            |
+
 ## Credits
 
 1. **[Project Gutenberg](https://www.gutenberg.org/)**: For providing the original [1913 US Webster's Unabridged Dictionary](https://www.gutenberg.org/ebooks/29765). Make sure you read the Project Gutenberg's [README](https://www.gutenberg.org/files/29765/29765-ReadMe.txt) for license and other details if you care considering using this for commercial purposes.
