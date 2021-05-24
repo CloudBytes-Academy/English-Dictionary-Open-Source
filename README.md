@@ -12,7 +12,9 @@ Since the dictionary is based on 1913 edition, it does not include any modern wo
 
 You can clone the repository by running:
 
-`git clone https://github.com/justgoodin/English-Dictionary-Formatted.git`
+```bash
+git clone https://github.com/justgoodin/English-Dictionary-Formatted.git
+```
 
 Find the [usage instructions here](#Instructions).
 
