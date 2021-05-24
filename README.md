@@ -50,7 +50,7 @@ There are 3 formats available as of now
 
 | Language | Instructions are available for                               |
 | -------- | ------------------------------------------------------------ |
-| Python   | CSV, [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/blob/main/USAGE.md#sqlite3), MYSQL |
+| Python   | [CSV](https://github.com/justgoodin/English-Dictionary-Formatted/blob/main/USAGE.md#csv), [SQLITE3](https://github.com/justgoodin/English-Dictionary-Formatted/blob/main/USAGE.md#sqlite3), MYSQL |
 
 ## Credits
 
