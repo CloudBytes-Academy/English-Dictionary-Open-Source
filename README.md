@@ -29,6 +29,6 @@ A brief overview of how to work with them in provided in respective README docum
 ## Credits
 
 1. **[Project Gutenberg](https://www.gutenberg.org/)**: For providing the original [1913 US Webster's Unabridged Dictionary](https://www.gutenberg.org/ebooks/29765). Make sure you read the Project Gutenberg's [README](https://www.gutenberg.org/files/29765/29765-ReadMe.txt) for license and other details if you care considering using this for commercial purposes.
-2. **[x16bkkamz6rkb78](https://sourceforge.net/u/x16bkkamz6rkb78/profile/) **: For compiling the MySQL dump and releasing on [Source Forge](https://sourceforge.net/projects/mysqlenglishdictionary/).
+2. **[x16bkkamz6rkb78](https://sourceforge.net/u/x16bkkamz6rkb78/profile/)**: For compiling the MySQL dump and releasing on [Source Forge](https://sourceforge.net/projects/mysqlenglishdictionary/).
 
 3. **[dumblob](https://github.com/dumblob)**: For providing the extraordinarily elegant [mysql2sqlite](https://github.com/dumblob/mysql2sqlite) tool for converting the MySQL dump to SQLite3. 
