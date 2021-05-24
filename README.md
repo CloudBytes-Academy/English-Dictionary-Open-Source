@@ -1,1 +1,4 @@
-# English Dictionary as CSV & SQlite3 DB
+# Open-Source Queryable Formatted English Dictionary
+
+
+
