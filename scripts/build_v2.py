@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["pyarrow>=15"]
+# dependencies = ["pyarrow==25.0.1"]  # pinned: other versions write different Parquet bytes
 # ///
 """Build the v2 dictionary (JSONL + Parquet) from two sources.
 
@@ -229,6 +229,11 @@ def write_jsonl_gz(rows: list[dict], path: Path) -> None:
 
 def write_parquet(rows: list[dict], path: Path) -> None:
     table = pa.Table.from_pylist(rows, schema=SCHEMA)
+    # The WordNet notice must appear on all copies, so the file carries the
+    # data license itself, not only the repository.
+    table = table.replace_schema_metadata(
+        {"license": (OUT / "LICENSE-DATA.md").read_text(encoding="utf-8")}
+    )
     # Rows are sorted by word, so small row groups let readers that fetch
     # byte ranges over HTTP (DuckDB, Polars) skip most of the file.
     pq.write_table(

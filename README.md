@@ -11,10 +11,11 @@ An open source English language dictionary in CSV, SQLite, MySQL, JSONL, and Par
 git clone https://github.com/CloudBytes-Academy/English-Dictionary-Open-Source
 ```
 
-Or download one file:
+Or download the v2 data and its license:
 
 ```bash
 curl -LO https://raw.githubusercontent.com/CloudBytes-Academy/English-Dictionary-Open-Source/main/v2/dictionary.parquet
+curl -LO https://raw.githubusercontent.com/CloudBytes-Academy/English-Dictionary-Open-Source/main/v2/LICENSE-DATA.md
 ```
 
 Find the [usage instructions here](USAGE.md).
@@ -25,7 +26,7 @@ Find the [usage instructions here](USAGE.md).
 
 | File | Description |
 | --- | --- |
-| [v2/dictionary.parquet](v2/dictionary.parquet) | Parquet, one row per definition, sorted by word. Opens in pandas, Polars, DuckDB, and Spark. |
+| [v2/dictionary.parquet](v2/dictionary.parquet) | Parquet, one row per definition, sorted by word. Opens in pandas, Polars, DuckDB, and Spark. Carries the data license in its metadata, under the key `license`. |
 | [v2/dictionary.jsonl.gz](v2/dictionary.jsonl.gz) | The same rows as gzipped JSON Lines, one JSON object per line. |
 | [v2/SHA256SUMS](v2/SHA256SUMS) | Checksums of both files. |
 | [v2/LICENSE-DATA.md](v2/LICENSE-DATA.md) | Data license and required attribution. |
@@ -63,18 +64,18 @@ Example rows:
 - Repairs garbled characters: `80Â¡` becomes `80°`, and `Ã2` becomes `√2`. Also `£`, `÷`, and `§`.
 - Joins definitions that had hard line breaks onto one line.
 - Removes 93 duplicate rows and 2 empty definitions.
-- Maps 293 different word-type spellings, including typos such as `supperl.` and `n .`, to the 11 values in `pos`. The original is kept in `wordtype`.
+- Maps 271 of the 293 word-type spellings, including typos such as `supperl.` and `n .`, to the 11 values in `pos`. The original is kept in `wordtype`.
 
 ### Known issues
 
 - 54 Webster's headwords, and some definitions, contain `/` where an accented letter was lost before this data reached OPTED, such as `assaf/tida` for *assafœtida*.
-- 3,919 Webster's rows have no `pos`, because the original has no word type.
+- 3,919 Webster's rows have no `pos`: 3,882 have no word type, and 37 have one that is not a part of speech, such as `obs.` or `See`.
 - About 16,000 Webster's rows are inflected forms whose definition only names the base word, such as `abandoned`, `imp. & p. p.`, `of Abandon`.
 - Open English WordNet examples belong to the whole synonym group, so an example can use a synonym instead of the headword.
 
 ### Rebuild
 
-The build is reproducible: it gives byte-identical files and checks the download against a pinned SHA-256. It needs [uv](https://docs.astral.sh/uv/).
+The build is reproducible: with the pinned pyarrow version, which uv installs, it gives byte-identical files. It also checks the download against a pinned SHA-256. It needs [uv](https://docs.astral.sh/uv/).
 
 ```bash
 uv run scripts/build_v2.py

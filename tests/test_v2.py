@@ -7,13 +7,15 @@ Run after building:
 import gzip
 import hashlib
 import json
+import re
 import unittest
 from collections import Counter
 from pathlib import Path
 
 import pyarrow.parquet as pq
 
-V2 = Path(__file__).resolve().parent.parent / "v2"
+ROOT = Path(__file__).resolve().parent.parent
+V2 = ROOT / "v2"
 POS = {
     "noun", "verb", "adjective", "adverb", "preposition", "conjunction",
     "pronoun", "interjection", "prefix", "suffix", "article", None,
@@ -42,6 +44,21 @@ class V2Test(unittest.TestCase):
         # 176,023 dump rows - 2 empty definitions - 93 exact duplicates.
         self.assertEqual(counts, {"webster1913": 175_928, "oewn": 212_659})
 
+    def test_parquet_written_by_pinned_pyarrow(self):
+        # Other pyarrow versions write different bytes, which breaks the
+        # byte-identical rebuild that the README promises.
+        script = (ROOT / "scripts" / "build_v2.py").read_text(encoding="utf-8")
+        pinned = re.search(r'"pyarrow==([\d.]+)"', script).group(1)
+        created_by = pq.ParquetFile(V2 / "dictionary.parquet").metadata.created_by
+        self.assertEqual(created_by, f"parquet-cpp-arrow version {pinned}")
+
+    def test_parquet_carries_data_license(self):
+        metadata = pq.read_schema(V2 / "dictionary.parquet").metadata
+        license_text = metadata[b"license"].decode("utf-8")
+        self.assertEqual(license_text, (V2 / "LICENSE-DATA.md").read_text(encoding="utf-8"))
+        self.assertIn("https://creativecommons.org/licenses/by/4.0/", license_text)
+        self.assertIn("WordNet 3.1 Copyright 2011 by Princeton University", license_text)
+
     def test_ids_unique(self):
         self.assertEqual(len({r["id"] for r in self.rows}), len(self.rows))
 
@@ -56,7 +73,7 @@ class V2Test(unittest.TestCase):
                 self.assertEqual(text, " ".join(text.split()), r["id"])
 
     def test_spreadsheet_corruption_is_gone(self):
-        self.assertNotIn("#NAME?", self.words)
+        self.assertNotIn("#name?", {w.casefold() for w in self.words})
         self.assertTrue({"-able", "-ance", "-ate"} <= self.words)
 
     def test_mojibake_is_gone(self):

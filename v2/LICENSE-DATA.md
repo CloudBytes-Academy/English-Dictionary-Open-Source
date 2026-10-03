@@ -14,6 +14,10 @@ redistribute them you must keep the attribution and notices below. If you
 need data with no conditions, keep only the rows where
 `source = 'webster1913'`, or use the v1 files in `csv/`, `sqlite3/`, or `mysql/`.
 
+`dictionary.parquet` also carries this whole file in its metadata, under the
+key `license`. JSON Lines has no place for it, so keep this file next to
+`dictionary.jsonl.gz`.
+
 ## Open English WordNet attribution
 
 Rows with `source = 'oewn'` are adapted from Open English WordNet 2025+,
