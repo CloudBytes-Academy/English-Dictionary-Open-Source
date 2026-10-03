@@ -6,17 +6,37 @@ The data in `v2/` comes from two sources with different terms. Each row's
 
 | `source` | Origin | License |
 | --- | --- | --- |
-| `webster1913` | Webster's Revised Unabridged Dictionary (1913), via [Project Gutenberg](https://www.gutenberg.org/ebooks/29765) and [OPTED](http://www.mso.anu.edu.au/~ralph/OPTED/) | Public domain |
+| `webster1913` | Webster's Revised Unabridged Dictionary (1913), via [Project Gutenberg](https://www.gutenberg.org/ebooks/29765) and [OPTED](http://www.mso.anu.edu.au/~ralph/OPTED/) | Public domain in the USA, with OPTED's usage conditions below |
 | `oewn` | [Open English WordNet](https://github.com/globalwordnet/english-wordnet) 2025+ edition | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) and the WordNet 3.1 license below |
 
 `dictionary.parquet` and `dictionary.jsonl.gz` contain both sources, so if you
 redistribute them you must keep the attribution and notices below. If you
-need data with no conditions, keep only the rows where
+do not want the Open English WordNet terms, keep only the rows where
 `source = 'webster1913'`, or use the v1 files in `csv/`, `sqlite3/`, or `mysql/`.
+Those still come with OPTED's usage conditions.
 
 `dictionary.parquet` also carries this whole file in its metadata, under the
 key `license`. JSON Lines has no place for it, so keep this file next to
 `dictionary.jsonl.gz`.
+
+## Webster's 1913 rows: OPTED usage conditions
+
+Rows with `source = 'webster1913'`, and all v1 files, come from OPTED v0.03
+through the SourceForge
+[MySQL English Dictionary](https://sourceforge.net/projects/mysqlenglishdictionary/).
+The [OPTED page](http://www.mso.anu.edu.au/~ralph/OPTED/) states:
+
+> The only usage conditions are that if the material is redistributed, the
+> content (not the formatting) remain in the public domain (ie free) and that
+> the content be easily accessible in non-encoded plain text format at no cost
+> to the end user. The origin of the content should also be acknowledged,
+> including OPTED, Project Gutenburg and the 1913 edition of Webster's
+> Unabridged Dictionary. If the material is to be included in commercial
+> products, Project Gutenburg should be contacted first. There are no
+> restrictions for personal or research uses of this material.
+
+The SourceForge project likewise asks you to acknowledge OPTED, and to contact
+Project Gutenberg before commercial use.
 
 ## Open English WordNet attribution
 

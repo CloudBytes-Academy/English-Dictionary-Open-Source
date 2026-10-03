@@ -58,6 +58,7 @@ class V2Test(unittest.TestCase):
         self.assertEqual(license_text, (V2 / "LICENSE-DATA.md").read_text(encoding="utf-8"))
         self.assertIn("https://creativecommons.org/licenses/by/4.0/", license_text)
         self.assertIn("WordNet 3.1 Copyright 2011 by Princeton University", license_text)
+        self.assertIn("The origin of the content should also be acknowledged", license_text)
 
     def test_ids_unique(self):
         self.assertEqual(len({r["id"] for r in self.rows}), len(self.rows))

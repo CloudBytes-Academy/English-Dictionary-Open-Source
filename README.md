@@ -126,7 +126,7 @@ OPTED is a public domain English word list dictionary, based on the public domai
 ## License
 
 - **Code**: [MIT](LICENSE).
-- **v1 data and Webster's rows in v2**: public domain.
+- **v1 data and Webster's rows in v2**: public domain in the USA. OPTED asks redistributors to acknowledge OPTED, Project Gutenberg, and the 1913 Webster's, and to contact Project Gutenberg before commercial use. See [v2/LICENSE-DATA.md](v2/LICENSE-DATA.md).
 - **Open English WordNet rows in v2** (`source = 'oewn'`): [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), plus the WordNet notice. If you share the v2 files, keep [v2/LICENSE-DATA.md](v2/LICENSE-DATA.md) with them.
 
 ## Credits
