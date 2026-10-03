@@ -75,7 +75,7 @@ Example rows:
 
 ### Rebuild
 
-The build is reproducible: with the pinned pyarrow version, which uv installs, it gives byte-identical files. It also checks the download against a pinned SHA-256. It needs [uv](https://docs.astral.sh/uv/).
+The build is reproducible. With the pinned pyarrow version, which uv installs, rebuilds give a byte-identical `dictionary.parquet` (verified on Linux with Python 3.11 to 3.13). `dictionary.jsonl.gz` always holds the same rows, but its compressed bytes depend on the zlib library in your Python: Python 3.14 and later on Windows uses zlib-ng, which writes a different file, so its line in `SHA256SUMS` changes there. The build also checks the download against a pinned SHA-256. It needs [uv](https://docs.astral.sh/uv/).
 
 ```bash
 uv run scripts/build_v2.py

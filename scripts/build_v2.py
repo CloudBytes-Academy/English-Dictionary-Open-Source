@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.10"
+# requires-python = ">=3.10,<3.15"  # pyarrow 25.0.1 has wheels for 3.10-3.14 only
 # dependencies = ["pyarrow==25.0.1"]  # pinned: other versions write different Parquet bytes
 # ///
 """Build the v2 dictionary (JSONL + Parquet) from two sources.
@@ -13,7 +13,10 @@ Usage:
     uv run scripts/build_v2.py
 
 Writes v2/dictionary.jsonl.gz, v2/dictionary.parquet and v2/SHA256SUMS.
-The build is deterministic: the same inputs give byte-identical outputs.
+With the pinned pyarrow, the same inputs give a byte-identical Parquet file
+and the same JSONL rows. The gzip bytes come from the interpreter's zlib, so
+they can differ: Python 3.14+ on Windows links zlib-ng, which writes a
+different dictionary.jsonl.gz.
 """
 
 from __future__ import annotations

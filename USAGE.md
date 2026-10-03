@@ -27,7 +27,7 @@ import json
 with gzip.open("v2/dictionary.jsonl.gz", "rt", encoding="utf-8") as file:
     for line in file:
         row = json.loads(line)
-        if row["word"] == "blog":
+        if row["word"].lower() == "blog":
             print(row["pos"], row["definition"])
 ```
 
@@ -98,5 +98,5 @@ Synonyms are the rows that share a `synset_id`
 SELECT DISTINCT b.word
 FROM 'v2/dictionary.parquet' a
 JOIN 'v2/dictionary.parquet' b USING (synset_id)
-WHERE a.word = 'happy' AND b.word <> 'happy';
+WHERE lower(a.word) = 'happy' AND lower(b.word) <> 'happy';
 ```
