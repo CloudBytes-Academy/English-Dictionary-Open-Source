@@ -21,8 +21,8 @@ key `license`. JSON Lines has no place for it, so keep this file next to
 
 ## Webster's 1913 rows: OPTED usage conditions
 
-Rows with `source = 'webster1913'`, and all v1 files, come from OPTED v0.03
-through the SourceForge
+Rows with `source = 'webster1913'`, and all v1 files, come from OPTED through
+the SourceForge
 [MySQL English Dictionary](https://sourceforge.net/projects/mysqlenglishdictionary/).
 The [OPTED page](http://www.mso.anu.edu.au/~ralph/OPTED/) states:
 
