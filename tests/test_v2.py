@@ -1,7 +1,7 @@
 """Checks on the built v2 files.
 
 Run after building:
-    uv run --with 'pyarrow>=15' python -m unittest discover tests
+    uv run --with 'pyarrow>=15' --with duckdb --with pandas python -m unittest discover tests
 """
 
 import gzip

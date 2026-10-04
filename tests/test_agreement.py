@@ -3,7 +3,7 @@ counted, so any other difference fails. test_v2.py already compares the
 JSONL and Parquet rows.
 
 Run with:
-    uv run --with 'pyarrow>=15' python -m unittest discover tests
+    uv run --with 'pyarrow>=15' --with duckdb --with pandas python -m unittest discover tests
 """
 
 import csv

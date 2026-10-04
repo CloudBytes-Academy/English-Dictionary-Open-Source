@@ -79,8 +79,16 @@ The build is reproducible. With the pinned pyarrow version, which uv installs, r
 
 ```bash
 uv run scripts/build_v2.py
-uv run --with 'pyarrow>=15' python -m unittest discover tests
+uv run --with 'pyarrow>=15' --with duckdb --with pandas python -m unittest discover tests
 ```
+
+The tests that read the public URLs need network, so they run separately:
+
+```bash
+uv run --with 'pyarrow>=15' --with duckdb --with pandas python -m unittest discover tests -p 'remote_*.py'
+```
+
+The MariaDB import test runs only when `MYSQL_HOST` names a server. It also reads `MYSQL_TCP_PORT`, `MYSQL_USER` (default `root`), and `MYSQL_PWD`.
 
 ## v1
 
@@ -100,7 +108,8 @@ Both databases use a table named `entries`, but their column types and nullabili
 | `wordtype` | `TEXT`, nullable | `varchar(20) NOT NULL` |
 | `definition` | `TEXT`, nullable | `text NOT NULL` |
 
-SQLite has an index named `ix_entries_word` on `word`. It contains 3,895 rows
+SQLite has an index named `ix_entries_word` on `word`. A query on `lower(word)`
+cannot use it and scans the whole table. The SQLite file contains 3,895 rows
 with a NULL `wordtype` and 2 with a NULL `definition`. CSV and the MySQL dump
 use empty strings for these values. The MySQL dump uses MyISAM and latin1.
 
