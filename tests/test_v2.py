@@ -12,7 +12,10 @@ import unittest
 from collections import Counter
 from pathlib import Path
 
+import pyarrow as pa
 import pyarrow.parquet as pq
+
+from data_contract import MALFORMED_V2, assert_malformed_headwords, assert_v2_samples
 
 ROOT = Path(__file__).resolve().parent.parent
 V2 = ROOT / "v2"
@@ -43,6 +46,25 @@ class V2Test(unittest.TestCase):
         counts = Counter(r["source"] for r in self.rows)
         # 176,023 dump rows - 2 empty definitions - 93 exact duplicates.
         self.assertEqual(counts, {"webster1913": 175_928, "oewn": 212_659})
+
+    def test_parquet_schema(self):
+        expected = pa.schema([
+            pa.field("id", pa.string(), nullable=False),
+            pa.field("word", pa.string(), nullable=False),
+            pa.field("pos", pa.string()),
+            pa.field("wordtype", pa.string()),
+            pa.field("definition", pa.string(), nullable=False),
+            pa.field("examples", pa.list_(pa.string()), nullable=False),
+            pa.field("synset_id", pa.string()),
+            pa.field("source", pa.string(), nullable=False),
+        ])
+        self.assertEqual(pq.read_schema(V2 / "dictionary.parquet").remove_metadata(), expected)
+
+    def test_samples(self):
+        assert_v2_samples(self, self.rows)
+
+    def test_known_defects(self):
+        assert_malformed_headwords(self, self.webster, MALFORMED_V2)
 
     def test_parquet_written_by_pinned_pyarrow(self):
         # Other pyarrow versions write different bytes, which breaks the
