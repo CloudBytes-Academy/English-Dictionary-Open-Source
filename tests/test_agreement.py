@@ -13,6 +13,7 @@ import sqlite3
 import unittest
 from collections import Counter
 
+import pyarrow.compute as pc
 import pyarrow.parquet as pq
 
 from data_contract import ROOT, parse_mysql_rows
@@ -52,6 +53,10 @@ V1_V2_DIFFERENCES = {
 }
 
 
+# The sample word that also has WordNet rows in v2.
+SAMPLE_WORD = "computer"
+
+
 def squash(text):
     return " ".join(text.split())
 
@@ -82,9 +87,24 @@ class AgreementTest(unittest.TestCase):
         cls.mysql = parse_mysql_rows(
             (ROOT / "mysql/dictionaryStudyTool.sql").read_text(encoding="latin-1")
         )
-        cls.parquet = pq.read_table(ROOT / "v2/dictionary.parquet").to_pylist()
+        # Keep only the v2 rows the tests read: all Webster's rows, and the
+        # WordNet sample rows. test_v2.py compares the full JSONL and Parquet.
+        table = pq.read_table(ROOT / "v2/dictionary.parquet")
+        cls.parquet = table.filter(pc.or_(
+            pc.equal(table["source"], "webster1913"), pc.equal(table["word"], SAMPLE_WORD),
+        )).to_pylist()
+        del table
         with gzip.open(ROOT / "v2/dictionary.jsonl.gz", "rt", encoding="utf-8") as file:
-            cls.jsonl = [json.loads(line) for line in file]
+            cls.jsonl = [
+                row for row in map(json.loads, file)
+                if row["id"] in ("webster1913-000362", "webster1913-010213")
+                or row["word"] == SAMPLE_WORD
+            ]
+
+    @classmethod
+    def tearDownClass(cls):
+        # Release the rows so later test classes do not hold them too.
+        del cls.csv, cls.sqlite, cls.mysql, cls.parquet, cls.jsonl
 
     def assert_differences(self, differences, unexpected, expected):
         # Show the first unexpected rows: they name the file that drifted.
@@ -223,7 +243,7 @@ class AgreementTest(unittest.TestCase):
                 )
         for name, rows in v2_files.items():
             with self.subTest(sample="computer", file=name):
-                computer = [r for r in rows if r["word"] == "computer"]
+                computer = [r for r in rows if r["word"] == SAMPLE_WORD]
                 self.assertEqual(
                     [r["definition"] for r in computer if r["source"] == "webster1913"],
                     ["One who computes."],
