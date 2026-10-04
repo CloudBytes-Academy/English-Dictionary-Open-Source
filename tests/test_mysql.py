@@ -7,13 +7,8 @@ from collections import Counter
 
 from data_contract import (
     ROOT, V1_HASHES, MALFORMED_MYSQL, TRUNCATED_WORDTYPES,
-    assert_malformed_headwords, assert_v1_samples,
+    assert_malformed_headwords, assert_v1_samples, parse_mysql_rows,
 )
-
-# Parse the dump independently of the v2 builder. Restrict parsing to INSERTs
-# and require every character of each payload to be consumed.
-TUPLE = re.compile(r"\('((?:[^'\\]|\\.)*)','((?:[^'\\]|\\.)*)','((?:[^'\\]|\\.)*)'\)")
-ESCAPES = {"0": "\0", "b": "\b", "n": "\n", "r": "\r", "t": "\t", "Z": "\x1a"}
 
 
 class MySQLTest(unittest.TestCase):
@@ -21,26 +16,7 @@ class MySQLTest(unittest.TestCase):
     def setUpClass(cls):
         cls.path = ROOT / "mysql/dictionaryStudyTool.sql"
         cls.sql = cls.path.read_text(encoding="latin-1")
-        cls.rows = []
-        inserts = re.findall(r"^INSERT INTO `entries` VALUES (.*);$", cls.sql, re.M)
-        if not inserts:
-            raise AssertionError("No entries INSERT statements found")
-        for payload in inserts:
-            offset = 0
-            while offset < len(payload):
-                match = TUPLE.match(payload, offset)
-                if match is None:
-                    raise AssertionError(f"Unparsed INSERT payload at offset {offset}")
-                fields = [
-                    re.sub(r"\\(.)", lambda m: ESCAPES.get(m[1], m[1]), s)
-                    for s in match.groups()
-                ]
-                cls.rows.append(dict(zip(("word", "wordtype", "definition"), fields)))
-                offset = match.end()
-                if offset < len(payload):
-                    if payload[offset] != "," or offset + 1 == len(payload):
-                        raise AssertionError(f"Invalid tuple separator at offset {offset}")
-                    offset += 1
+        cls.rows = parse_mysql_rows(cls.sql)
 
     def test_original_hash(self):
         self.assertEqual(

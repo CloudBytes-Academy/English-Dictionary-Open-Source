@@ -1,5 +1,6 @@
-"""Independent expected values from issue #2, shared by the format tests."""
+"""Independent expected values and the dump parser, shared by the format tests."""
 
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -57,6 +58,35 @@ TRUNCATED_WORDTYPES = {
     "pron., a., conj., & ": 10,
     "Archaic imp. & p. p.": 1,
 }
+
+# Parse the dump independently of the v2 builder. Restrict parsing to INSERTs
+# and require every character of each payload to be consumed.
+TUPLE = re.compile(r"\('((?:[^'\\]|\\.)*)','((?:[^'\\]|\\.)*)','((?:[^'\\]|\\.)*)'\)")
+ESCAPES = {"0": "\0", "b": "\b", "n": "\n", "r": "\r", "t": "\t", "Z": "\x1a"}
+
+
+def parse_mysql_rows(sql):
+    rows = []
+    inserts = re.findall(r"^INSERT INTO `entries` VALUES (.*);$", sql, re.M)
+    if not inserts:
+        raise AssertionError("No entries INSERT statements found")
+    for payload in inserts:
+        offset = 0
+        while offset < len(payload):
+            match = TUPLE.match(payload, offset)
+            if match is None:
+                raise AssertionError(f"Unparsed INSERT payload at offset {offset}")
+            fields = [
+                re.sub(r"\\(.)", lambda m: ESCAPES.get(m[1], m[1]), s)
+                for s in match.groups()
+            ]
+            rows.append(dict(zip(("word", "wordtype", "definition"), fields)))
+            offset = match.end()
+            if offset < len(payload):
+                if payload[offset] != "," or offset + 1 == len(payload):
+                    raise AssertionError(f"Invalid tuple separator at offset {offset}")
+                offset += 1
+    return rows
 
 
 def assert_malformed_headwords(test, rows, expected):
