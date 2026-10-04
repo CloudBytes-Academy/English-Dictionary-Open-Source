@@ -5,6 +5,7 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+RAW_MAIN = "https://raw.githubusercontent.com/CloudBytes-Academy/English-Dictionary-Open-Source/main"
 
 V1_HASHES = {
     "csv/dictionary.csv": "78e25547dd4ee14e128d6b171296c60563d21a9a32f6a579c8d91c0bf08088da",
@@ -152,3 +153,12 @@ def assert_v2_samples(test, rows):
     smartphone = [r for r in rows if r["word"] == "smartphone"]
     test.assertEqual(len(smartphone), 1)
     test.assertEqual(smartphone[0]["source"], "oewn")
+
+
+def usage_blocks(language):
+    """Return the fenced code blocks of one language in USAGE.md, in order."""
+    text = (ROOT / "USAGE.md").read_text(encoding="utf-8")
+    blocks = re.findall(rf"^```{language}\n(.*?)^```$", text, re.M | re.S)
+    if not blocks:
+        raise AssertionError(f"No {language} blocks found in USAGE.md")
+    return blocks
