@@ -64,9 +64,10 @@ class MariaDBImportTest(unittest.TestCase):
         program = shutil.which("mariadb") or shutil.which("mysql")
         if program is None:
             self.fail("MYSQL_HOST is set, but no mariadb or mysql client is on PATH")
-        # Option files override environment variables, so pass the endpoint
-        # on the command line.
+        # Option files override environment variables, so ignore them.
+        # --no-defaults must come first.
         options = [
+            "--no-defaults",
             f"--host={os.environ['MYSQL_HOST']}",
             f"--port={os.environ.get('MYSQL_TCP_PORT', '3306')}",
             "--protocol=TCP",

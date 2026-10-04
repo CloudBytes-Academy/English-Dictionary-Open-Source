@@ -88,7 +88,7 @@ The tests that read the public URLs need network, so they run separately:
 uv run --with 'pyarrow>=15' --with duckdb --with pandas python -m unittest discover tests -p 'remote_*.py'
 ```
 
-The MariaDB import test runs only when `MYSQL_HOST` names a server. It connects over TCP and also reads `MYSQL_TCP_PORT` (default `3306`), `MYSQL_USER` (default `root`), and `MYSQL_PWD`.
+The MariaDB import test runs only when `MYSQL_HOST` names a server. It ignores MariaDB option files, connects over TCP, and also reads `MYSQL_TCP_PORT` (default `3306`), `MYSQL_USER` (default `root`), and `MYSQL_PWD`.
 
 ## v1
 
