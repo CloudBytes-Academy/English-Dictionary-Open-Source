@@ -1,7 +1,8 @@
 """Query each format the way people use it: SQLite, MariaDB, pandas, and DuckDB.
 
 The MariaDB import runs only when MYSQL_HOST names a server, because it needs
-one. Set MYSQL_TCP_PORT, MYSQL_USER (default root), and MYSQL_PWD as needed.
+one. Set MYSQL_TCP_PORT (default 3306), MYSQL_USER (default root), and
+MYSQL_PWD as needed.
 """
 
 import gzip
@@ -42,15 +43,19 @@ class SQLiteQueryTest(unittest.TestCase):
             self.connection.execute(query).fetchall(),
             [("computer", "n.", "One who computes.")],
         )
-        self.assertEqual(
-            self.plan(query), ["SEARCH entries USING INDEX ix_entries_word (word=?)"],
-        )
+        # SQLite does not promise a stable plan wording, so check only the
+        # operation and the index name.
+        [step] = self.plan(query)
+        self.assertTrue(step.startswith("SEARCH"), step)
+        self.assertIn("USING INDEX ix_entries_word", step)
 
     def test_lowercase_lookup_scans_table(self):
         # The README documents this full scan. The index is on word, not lower(word).
         query = "SELECT * FROM entries WHERE lower(word) = 'computer'"
         self.assertEqual(len(self.connection.execute(query).fetchall()), 1)
-        self.assertEqual(self.plan(query), ["SCAN entries"])
+        [step] = self.plan(query)
+        self.assertTrue(step.startswith("SCAN"), step)
+        self.assertNotIn("INDEX", step)
 
 
 @unittest.skipUnless(os.environ.get("MYSQL_HOST"), "MYSQL_HOST is not set")
@@ -59,9 +64,16 @@ class MariaDBImportTest(unittest.TestCase):
         program = shutil.which("mariadb") or shutil.which("mysql")
         if program is None:
             self.fail("MYSQL_HOST is set, but no mariadb or mysql client is on PATH")
-        user = os.environ.get("MYSQL_USER", "root")
+        # Option files override environment variables, so pass the endpoint
+        # on the command line.
+        options = [
+            f"--host={os.environ['MYSQL_HOST']}",
+            f"--port={os.environ.get('MYSQL_TCP_PORT', '3306')}",
+            "--protocol=TCP",
+            f"--user={os.environ.get('MYSQL_USER', 'root')}",
+        ]
         return subprocess.run(
-            [program, f"--user={user}", "--batch", "--skip-column-names", *args],
+            [program, *options, "--batch", "--skip-column-names", *args],
             stdin=stdin, capture_output=True, text=True, check=True,
         ).stdout
 
@@ -135,11 +147,13 @@ class RangeHandler(BaseHTTPRequestHandler):
             self.send_response(200)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Accept-Ranges", "bytes")
-        self.end_headers()
-        self.wfile.write(body)
+        # Count before writing: the client can finish its query as soon as it
+        # has the bytes, before this thread would run another line.
         with self.server.lock:
             self.server.bytes_sent += len(body)
             self.server.requests += 1
+        self.end_headers()
+        self.wfile.write(body)
 
     def log_message(self, *args):
         pass
