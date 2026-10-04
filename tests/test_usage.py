@@ -1,6 +1,5 @@
 """Run every Python and SQL example in USAGE.md against the files in this repo."""
 
-import contextlib
 import subprocess
 import sys
 import unittest
@@ -24,10 +23,10 @@ class UsageExamplesTest(unittest.TestCase):
         # The remote example runs offline here against the same file in the
         # checkout. remote_checks.py runs it against GitHub.
         email, synonyms = usage_blocks("sql")
-        email = email.replace(f"{RAW_MAIN}/", "")
-        with contextlib.chdir(ROOT):
-            email_rows = duckdb.sql(email).fetchall()
-            synonym_rows = duckdb.sql(synonyms).fetchall()
+        email = email.replace(RAW_MAIN, ROOT.as_posix())
+        synonyms = synonyms.replace("'v2/", f"'{ROOT.as_posix()}/v2/")
+        email_rows = duckdb.sql(email).fetchall()
+        synonym_rows = duckdb.sql(synonyms).fetchall()
         self.assertEqual(
             sorted((word, pos, source) for word, pos, _, source in email_rows),
             [("email", "noun", "oewn")] * 3 + [("email", "verb", "oewn")],

@@ -12,6 +12,7 @@ import sqlite3
 import subprocess
 import threading
 import unittest
+import uuid
 from collections import Counter
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -54,8 +55,6 @@ class SQLiteQueryTest(unittest.TestCase):
 
 @unittest.skipUnless(os.environ.get("MYSQL_HOST"), "MYSQL_HOST is not set")
 class MariaDBImportTest(unittest.TestCase):
-    DATABASE = "english_dictionary_test"
-
     def client(self, *args, stdin=None):
         program = shutil.which("mariadb") or shutil.which("mysql")
         if program is None:
@@ -67,11 +66,13 @@ class MariaDBImportTest(unittest.TestCase):
         ).stdout
 
     def test_dump_imports(self):
-        self.client("-e", f"DROP DATABASE IF EXISTS {self.DATABASE}; CREATE DATABASE {self.DATABASE}")
-        self.addCleanup(self.client, "-e", f"DROP DATABASE {self.DATABASE}")
+        # A new name per run, so the test never drops a database it did not create.
+        database = f"english_dictionary_test_{uuid.uuid4().hex}"
+        self.client("-e", f"CREATE DATABASE {database}")
+        self.addCleanup(self.client, "-e", f"DROP DATABASE {database}")
         with (ROOT / "mysql/dictionaryStudyTool.sql").open("rb") as dump:
-            self.client(self.DATABASE, stdin=dump)
-        count = self.client(self.DATABASE, "-e", "SELECT COUNT(*) FROM entries")
+            self.client(database, stdin=dump)
+        count = self.client(database, "-e", "SELECT COUNT(*) FROM entries")
         self.assertEqual(count.strip(), "176023")
 
 
