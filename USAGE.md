@@ -39,7 +39,7 @@ To import in a file object, we recommend using DictReader
 from csv import DictReader
 
 data = []
-with open("sandbox/dictionary.csv") as file:
+with open("csv/dictionary.csv") as file:
     rows = DictReader(file)
     for row in rows:
         data.append(row)
@@ -55,7 +55,7 @@ However, you can also use a generic CSV reader to import the data as a list of l
 from csv import reader
 
 data = []
-with open("sandbox/dictionary.csv") as file:
+with open("csv/dictionary.csv") as file:
     rows = reader(file)
     for row in rows:
         data.append(row)
