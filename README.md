@@ -92,15 +92,17 @@ The v1 dictionary has 3 fields
 
 ### Database Schema
 
-The table is named 'entries' and has the following schema
+Both databases use a table named `entries`, but their column types and nullability differ.
 
-```sqlite
-Column      Type             Schema
-------      --------------   -------------------------------
-word        varchar(25)      "word" varchar(25) NOT NULL
-wordtype    varchar(20)      "wordtype" varchar(20) NOT NULL  
-definition  text             "definition" text NOT NULL
-```
+| Column | SQLite | MySQL dump |
+| --- | --- | --- |
+| `word` | `TEXT`, nullable | `varchar(25) NOT NULL` |
+| `wordtype` | `TEXT`, nullable | `varchar(20) NOT NULL` |
+| `definition` | `TEXT`, nullable | `text NOT NULL` |
+
+SQLite has an index named `ix_entries_word` on `word`. It contains 3,895 rows
+with a NULL `wordtype` and 2 with a NULL `definition`. CSV and the MySQL dump
+use empty strings for these values. The MySQL dump uses MyISAM and latin1.
 
 ### Dictionary Format & Repository Structure
 
