@@ -90,6 +90,17 @@ uv run --with 'pyarrow>=15' --with duckdb --with pandas python -m unittest disco
 
 The MariaDB import test runs only when `MYSQL_HOST` names a server. It ignores MariaDB option files, connects over TCP, and also reads `MYSQL_TCP_PORT` (default `3306`), `MYSQL_USER` (default `root`), and `MYSQL_PWD`.
 
+### Local CI
+
+This repo has no GitHub Actions. Before you open or update a pull request, push your commit, then run:
+
+```bash
+python3 scripts/local_ci.py               # rebuild, compare v2/, run the offline tests, then sign off
+python3 scripts/local_ci.py --no-signoff  # the same checks, no status
+```
+
+It fails if the rebuild changes anything in `v2/`. When every check passes, it posts a `signoff` status on the tested commit. A signoff covers one commit, so run it again after you push more commits. The script refuses to sign off when the worktree is dirty, when `HEAD` changes during the run, or when GitHub does not have the commit. The status description says `without MariaDB` when `MYSQL_HOST` is not set. It does not run the network tests.
+
 ## v1
 
 The v1 dictionary has 3 fields
