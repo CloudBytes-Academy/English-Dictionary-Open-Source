@@ -21,6 +21,7 @@ commit yet. It needs uv and an authenticated gh.
 
 from __future__ import annotations
 
+import argparse
 import os
 import subprocess
 import sys
@@ -47,8 +48,14 @@ def step(name: str, command: list[str]) -> None:
         sys.exit(f"\nFAILED: {name}. No signoff was posted.")
 
 
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run the checks locally, then post a signoff status on the tested commit.", allow_abbrev=False)
+    parser.add_argument("--no-signoff", action="store_true", help="run the checks without posting a status")
+    return parser.parse_args(argv)
+
+
 def main() -> None:
-    signoff = "--no-signoff" not in sys.argv[1:]
+    signoff = not parse_args(sys.argv[1:]).no_signoff
     if signoff and dirty():
         sys.exit(f"The worktree is not clean. Commit the exact tree before signoff:\n{dirty()}")
     sha = git("rev-parse", "HEAD")
