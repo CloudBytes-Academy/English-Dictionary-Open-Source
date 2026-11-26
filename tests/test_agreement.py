@@ -9,6 +9,7 @@ Run with:
 import csv
 import gzip
 import json
+import re
 import sqlite3
 import unittest
 from collections import Counter
@@ -50,6 +51,7 @@ V1_V2_DIFFERENCES = {
     "wordtype empty -> null": 3_882,
     "definition whitespace collapsed": 75_489,
     "definition encoding repaired": 72,
+    "headword slash restored": 42,
 }
 
 
@@ -59,6 +61,17 @@ SAMPLE_WORD = "computer"
 
 def squash(text):
     return " ".join(text.split())
+
+
+def restores_slash(broken, fixed):
+    """True if `fixed` is `broken` with each "/" replaced by at most two letters.
+
+    The dump has "/" where a letter was lost, such as "assaf/tida". v2 puts
+    back the spelling from the Gutenberg text, "assafoetida". A "/" at the
+    end, or after a space, stands for nothing, as in "adder fly/".
+    """
+    parts = [re.escape(part) for part in broken.replace(" /", "/").split("/")]
+    return "/" not in fixed and re.fullmatch("[a-z\u00e6]{0,2}".join(parts), fixed) is not None
 
 
 def repair(text, row):
@@ -186,6 +199,9 @@ class AgreementTest(unittest.TestCase):
                 continue
             cleaned[tuple(expected.values())] = row
             actual = {field: v2_row[field] for field in FIELDS}
+            if actual["word"] != expected["word"] and restores_slash(expected["word"], actual["word"]):
+                differences["headword slash restored"] += 1
+                expected["word"] = actual["word"]
             if actual != expected:
                 unexpected.append((row, expected, actual))
                 continue
