@@ -71,7 +71,7 @@ Example rows:
 ### Known issues
 
 - 17 Webster's headwords, and some definitions, still contain `/`, mostly where a letter was lost before this data reached OPTED, such as `dou/ted` for *doubted*. The Project Gutenberg text does not confirm a spelling for these, so v2 leaves them as they are.
-- 3,351 Webster's rows have no `pos`: 3,318 have no word type, and 33 have one that is not a part of speech, such as `obs.` or `See`. v2 fills in `pos` only from a grammar label in Webster's abbreviations at the start of the definition, and does not guess the rest. Some of these rows name the form in plain words instead, such as `the preterit of Eat`.
+- 3,351 Webster's rows have no `pos`: 3,318 have no word type, and 33 have one that is not a part of speech, such as `m.` or `See`. v2 fills in `pos` only from a grammar label in Webster's abbreviations at the start of the definition, and does not guess the rest. Some of these rows name the form in plain words instead, such as `the preterit of Eat`.
 - About 16,000 Webster's rows are inflected forms whose definition only names the base word, such as `abandoned`, `imp. & p. p.`, `of Abandon`.
 - Open English WordNet examples belong to the whole synonym group, so an example can use a synonym instead of the headword.
 
