@@ -154,7 +154,7 @@ HEADWORD_FIXES = {
 # such as "old imp." or "imp. & archaic p. p.", which are dropped before the
 # rules read it, and brackets or slashes, as in "imp. (/ rare p. p.) of
 # Smite.". Labels in plain words, such as "the preterit of Eat", are not read.
-LABEL_QUALIFIER = r"(?:the|old|strong|original|archaic|rare|poet\.|obs\.)"
+LABEL_QUALIFIER = r"(?:(?:the|old|strong|original|archaic|rare)\b|poet\.|obs\.)"
 DEFINITION_LABEL_RE = re.compile(
     r"(?:\.\s+)?\(?"  # one row starts with a stray ". ": ". imp. & p. p. of Read."
     r"(?:(?:" + LABEL_QUALIFIER + r"|(?:imp|pret|pres|indic|p|pr|pl|sing|compar|superl|a|n|vb|pers|per)\.|(?:1st|2d|3d)\.?|&\.?|or|a(?= &))[ ,/()]*)+"
@@ -207,7 +207,7 @@ def definition_label_pos(definition: str) -> str | None:
     label = match.group(0).lower().removeprefix(". ")
     label = re.sub(r"\b" + LABEL_QUALIFIER + r"\s*|[()/]", " ", label)
     label = " ".join(label.split()).strip(" ,")
-    # A qualifier alone is not a label: "The trepang." leaves nothing here.
+    # A qualifier alone is not a label: "The Echinodermata." leaves nothing here.
     return LABEL_POS.get(label) or webster_pos(label)
 
 
