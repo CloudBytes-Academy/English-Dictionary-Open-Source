@@ -147,8 +147,10 @@ HEADWORD_FIXES = {
 # Some rows have no word type, and Webster's put the grammar label at the
 # start of the definition instead: "imp. of Bind.", "a. & n. from Flow, v. i.".
 # For rows with no part of speech, read that label with the same rules as
-# word types. A label is grammar abbreviations followed by "of", "from" or
-# "fr.", so a definition such as "A plant of the genus ..." is not one. It may
+# word types. A label is grammar abbreviations followed by "of", "from",
+# "fr.", the base word alone ("imp. & p. p. Bestick.") or nothing more
+# ("obs. imp. pl."), so a definition such as "A plant of the genus ..." is
+# not one. It may
 # include the words Webster's uses to describe the form, such as "old imp."
 # or "imp. & archaic p. p.", which are dropped before the rules read it, and
 # brackets or slashes, as in "imp. (/ rare p. p.) of Smite.". Labels in plain
@@ -157,7 +159,7 @@ LABEL_QUALIFIER = r"(?:the|old|strong|original|archaic|rare|poet\.|obs\.)"
 DEFINITION_LABEL_RE = re.compile(
     r"(?:\.\s+)?\(?"  # one row starts with a stray ". ": ". imp. & p. p. of Read."
     r"(?:(?:" + LABEL_QUALIFIER + r"|(?:imp|pret|pres|indic|p|pr|pl|sing|compar|superl|a|n|vb|pers|per)\.|(?:1st|2d|3d)\.?|&\.?|or|a(?= &))[ ,/()]*)+"
-    r"(?=of\b|from\b|fr\.)",
+    r"(?=of\b|from\b|fr\.|[A-Z][a-z]+\.?$|$)",
     re.I,
 )
 # The rules read these labels wrongly or not at all.
@@ -206,6 +208,7 @@ def definition_label_pos(definition: str) -> str | None:
     label = match.group(0).lower().removeprefix(". ")
     label = re.sub(r"\b" + LABEL_QUALIFIER + r"\s*|[()/]", " ", label)
     label = " ".join(label.split()).strip(" ,")
+    # A qualifier alone is not a label: "The trepang." leaves nothing here.
     return LABEL_POS.get(label) or webster_pos(label)
 
 
