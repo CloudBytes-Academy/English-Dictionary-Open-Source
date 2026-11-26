@@ -9,7 +9,6 @@ Run with:
 import csv
 import gzip
 import json
-import re
 import sqlite3
 import unittest
 from collections import Counter
@@ -51,7 +50,7 @@ V1_V2_DIFFERENCES = {
     "wordtype empty -> null": 3_882,
     "definition whitespace collapsed": 75_489,
     "definition encoding repaired": 72,
-    "headword slash restored": 42,
+    "headword slash restored": 43,
 }
 
 
@@ -63,15 +62,48 @@ def squash(text):
     return " ".join(text.split())
 
 
-def restores_slash(broken, fixed):
-    """True if `fixed` is `broken` with each "/" replaced by at most two letters.
-
-    The dump has "/" where a letter was lost, such as "assaf/tida". v2 puts
-    back the spelling from the Gutenberg text, "assafoetida". A "/" at the
-    end, or after a space, stands for nothing, as in "adder fly/".
-    """
-    parts = [re.escape(part) for part in broken.replace(" /", "/").split("/")]
-    return "/" not in fixed and re.fullmatch("[a-z\u00e6]{0,2}".join(parts), fixed) is not None
+# Headwords the dump has with "/" where a letter was lost, and the spelling
+# v2 gives them, from the Project Gutenberg text. Listed here, not imported
+# from the build, so a wrong spelling in the build fails this test.
+RESTORED_HEADWORDS = {
+    "adder fly/": "adder fly",
+    "alen/on lace": "alencon lace",
+    "assaf/tida": "assafoetida",
+    "cor/niculate": "corniculate",
+    "cr/che": "creche",
+    "dendroc/la": "dendrocoela",
+    "feather-brained/": "feather-brained",
+    "feather-edge/": "feather-edge",
+    "feather-edged/": "feather-edged",
+    "feather-few/": "feather-few",
+    "fedaliza/tion": "feudalization",
+    "gairish/ness": "gairishness",
+    "globigerin/": "globigerin\xe6",
+    "lav/sium": "lavoesium",
+    "lima/on": "limacon",
+    "m/tin": "matin",
+    "melib/an": "meliboean",
+    "melop/ia": "melopoeia",
+    "mesam/boid": "mesamoeboid",
+    "mesogl/a": "mesogloea",
+    "mesophl/um": "mesophloeum",
+    "orthopn/a": "orthopnoea",
+    "otorrh/a": "otorrhoea",
+    "pound/keeper": "poundkeeper",
+    "precogita/tion": "precogitation",
+    "prosopop/ia": "prosopopoeia",
+    "proven/al": "provencal",
+    "rh/tian": "rhaetian",
+    "rh/tic": "rhaetic",
+    "rh/tizite": "rhaetizite",
+    "shortened /": "shortened",
+    "tox/mia": "toxaemia",
+    "tracer/y": "tracery",
+    "tri/cia": "trioecia",
+    "tri/cious": "trioecious",
+    "vouch/or": "vouchor",
+    "zu/is": "zunis",
+}
 
 
 def repair(text, row):
@@ -199,9 +231,9 @@ class AgreementTest(unittest.TestCase):
                 continue
             cleaned[tuple(expected.values())] = row
             actual = {field: v2_row[field] for field in FIELDS}
-            if actual["word"] != expected["word"] and restores_slash(expected["word"], actual["word"]):
+            if expected["word"] in RESTORED_HEADWORDS:
+                expected["word"] = RESTORED_HEADWORDS[expected["word"]]
                 differences["headword slash restored"] += 1
-                expected["word"] = actual["word"]
             if actual != expected:
                 unexpected.append((row, expected, actual))
                 continue

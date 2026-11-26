@@ -100,8 +100,9 @@ POS_RULES = [(re.compile(p), pos) for p, pos in POS_RULES]
 # letters and drops accents ("ASSAFOETIDA", "CRECHE"), so these do too.
 # Where an entry gives two spellings, the dump's other rows decide which one
 # the slash stands for: "melibean" is a separate row, "Alt. of Melib/an", so
-# "melib/an" is "meliboean". The other headwords with "/" stay as they are,
-# because the Gutenberg text does not confirm a spelling, as in "pl. Ballist.".
+# "melib/an" is "meliboean". Some slashes stood for no letter at all, only a
+# stress mark, as in "cor/niculate". The other headwords with "/" stay as they
+# are, because the Gutenberg text does not confirm a spelling, as in "pl. Ballist.".
 HEADWORD_FIXES = {
     "adder fly/": "adder fly",
     "alen/on lace": "alencon lace",
@@ -113,6 +114,7 @@ HEADWORD_FIXES = {
     "feather-edge/": "feather-edge",
     "feather-edged/": "feather-edged",
     "feather-few/": "feather-few",
+    "fedaliza/tion": "feudalization",  # Gutenberg "Feu*dal*i*za/tion": the dump also lost the "u"
     "gairish/ness": "gairishness",
     "globigerin/": "globigerin\u00e6",  # Gutenberg: "pl. Globigerinae" with the ae ligature
     "lav/sium": "lavoesium",

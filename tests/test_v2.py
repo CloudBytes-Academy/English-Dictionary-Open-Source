@@ -126,12 +126,12 @@ class V2Test(unittest.TestCase):
                 self.assertIsNotNone(r["synset_id"], r["id"])
 
     def test_slashed_headwords(self):
-        # 42 rows got a lost letter back from the Gutenberg text. These 18
+        # 43 rows got their spelling back from the Gutenberg text. These 17
         # headwords keep their "/", because the Gutenberg text does not confirm a spelling.
         slashed = sorted({r["word"] for r in self.webster if "/" in r["word"]})
         self.assertEqual(slashed, [
             "ballist/", "basilic/", "di/////", "di/planted", "dou/ted", "emyd//",
-            "eying / eyeing", "fedaliza/tion", "glabell/", "gloss/", "gonothec/",
+            "eying / eyeing", "glabell/", "gloss/", "gonothec/",
             "nuch/", "nudge/", "nymph/", "prepare/", "pseudofilari/", "pup/", "review/d",
         ])
         restored = {r["id"]: r["word"] for r in self.webster}
