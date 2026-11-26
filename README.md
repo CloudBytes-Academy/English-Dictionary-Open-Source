@@ -61,7 +61,7 @@ Example rows:
 
 ### What v2 fixes in the Webster's data
 
-- Restores 224 words, such as `-able` and `-ance`, that a spreadsheet had turned into `#NAME?` in the v1 CSV and SQLite files.
+- Restores 145 words, in 224 rows, such as `-able` and `-ance`, that a spreadsheet had turned into `#NAME?` in the v1 CSV and SQLite files.
 - Repairs garbled characters: `80Â¡` becomes `80°`, and `Ã2` becomes `√2`. Also `£`, `÷`, and `§`.
 - Joins definitions that had hard line breaks onto one line.
 - Repairs 37 headwords, in 43 rows, that had a `/` in place of a lost letter or a stray mark. Each one now has the spelling in the Project Gutenberg text. For example, `assaf/tida` becomes `assafoetida`, and `cr/che` becomes `creche`. The Gutenberg text mostly writes ligatures as two letters and drops accents, so the restored words do too. The exception is `globigerinæ`, which Gutenberg prints with `æ`.

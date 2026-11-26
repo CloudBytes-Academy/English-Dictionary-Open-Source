@@ -1,4 +1,4 @@
-"""Check every number the README quotes about the data against the data files.
+"""Check every count the README gives about the data against the data files.
 
 Each figure is found by the sentence it sits in, so changing a number in the
 README, or changing the data, fails a test. A rewritten sentence fails too,
@@ -8,6 +8,7 @@ until its pattern here is updated.
 import csv
 import importlib.util
 import re
+import sqlite3
 import unittest
 
 import pyarrow.parquet as pq
@@ -52,6 +53,16 @@ class ReadmeFiguresTest(unittest.TestCase):
             if match and r["base_word"] is None:
                 unlinked.append((r["word"], match.group(1).lower()))
         empty = sum(not row["definition"].strip() for row in dump)
+        connection = sqlite3.connect((ROOT / "sqlite3/dictionary.db").as_uri() + "?mode=ro", uri=True)
+        null_wordtype, null_definition = connection.execute(
+            "SELECT sum(wordtype IS NULL), sum(definition IS NULL) FROM entries"
+        ).fetchone()
+        connection.close()
+        # v2 rows whose v1 CSV word was "#NAME?".
+        name_rows = [
+            by_id[f"webster1913-{number_:06d}"]["word"] for number_, row in enumerate(v1, 1)
+            if row["word"] == "#NAME?" and f"webster1913-{number_:06d}" in by_id
+        ]
 
         cls.actual = {
             "v2 definitions": len(rows),
@@ -63,10 +74,13 @@ class ReadmeFiguresTest(unittest.TestCase):
             "words only in WordNet": len(only_oewn),
             "single words only in WordNet": sum(" " not in w for w in only_oewn),
             "phrases only in WordNet": sum(" " in w for w in only_oewn),
-            "#NAME? words restored": sum(r["word"] == "#NAME?" for r in v1),
+            "#NAME? words restored": len(set(name_rows)),
+            "#NAME? rows restored": len(name_rows),
             "headwords repaired": len(set(restored)),
             "rows with repaired headwords": len(restored),
             "duplicate rows removed": len(dump) - empty - len(webster),
+            "v1 SQLite NULL word types": null_wordtype,
+            "v1 SQLite NULL definitions": null_definition,
             "empty definitions removed": empty,
             "word types mapped": sum(build_v2.webster_pos(w) is not None for w in word_types),
             "word types": len(word_types),
@@ -103,11 +117,14 @@ class ReadmeFiguresTest(unittest.TestCase):
         "words only in WordNet": r"Adds ([\d,]+) words that Webster's does not have",
         "single words only in WordNet": r"does not have: ([\d,]+) single words",
         "phrases only in WordNet": r"and ([\d,]+) phrases, such as `domestic dog`",
-        "#NAME? words restored": r"Restores ([\d,]+) words, such as `-able`",
+        "#NAME? words restored": r"Restores ([\d,]+) words, in [\d,]+ rows, such as `-able`",
+        "#NAME? rows restored": r"Restores [\d,]+ words, in ([\d,]+) rows, such as `-able`",
         "headwords repaired": r"Repairs ([\d,]+) headwords, in [\d,]+ rows",
         "rows with repaired headwords": r"Repairs [\d,]+ headwords, in ([\d,]+) rows",
         "duplicate rows removed": r"Removes ([\d,]+) duplicate rows",
         "empty definitions removed": r"duplicate rows and ([\d,]+) empty definitions",
+        "v1 SQLite NULL word types": r"The SQLite file contains ([\d,]+) rows\s+with a NULL `wordtype`",
+        "v1 SQLite NULL definitions": r"with a NULL `wordtype` and ([\d,]+) with a NULL `definition`",
         "word types mapped": r"Maps ([\d,]+) of the [\d,]+ word-type spellings",
         "word types": r"Maps [\d,]+ of the ([\d,]+) word-type spellings",
         "pos values": r"to the ([\d,]+) values in `pos`",
