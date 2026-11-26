@@ -203,9 +203,10 @@ def webster_pos(wordtype: str) -> str | None:
 
 # Word forms whose whole definition names the base word: "abandoned" is
 # defined as "of Abandon". base_word links them to it, but only when the name
-# is another Webster's headword. Headwords that begin with "-", such as
-# "-ances" ("pl. of Discrepancy"), were broken before the data reached OPTED,
-# so they get no link.
+# is another Webster's headword. The name gets the same spelling fixes as
+# headwords, so "traceries", "of Tracer/y", links to "tracery". Headwords that
+# begin with "-", such as "-ances" ("of Discrepancy"), were broken before the
+# data reached OPTED, so they get no link.
 BASE_WORD_RE = re.compile(r"of (\S.*?)\.?")
 
 
@@ -214,6 +215,7 @@ def add_base_words(rows: list[dict], stats: Counter) -> None:
     for row in rows:
         match = BASE_WORD_RE.fullmatch(row["definition"])
         base = match.group(1).lower() if match else None
+        base = HEADWORD_FIXES.get(base, base)
         if base in headwords and base != row["word"] and not row["word"].startswith("-"):
             row["base_word"] = base
             stats["webster_base_word"] += 1

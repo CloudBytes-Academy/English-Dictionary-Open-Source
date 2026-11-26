@@ -146,12 +146,18 @@ class V2Test(unittest.TestCase):
         # Word forms whose whole definition is "of" and another headword,
         # such as "abandoned", "of Abandon", link to that headword.
         linked = [r for r in self.webster if r["base_word"] is not None]
-        self.assertEqual(len(linked), 15_682)
+        self.assertEqual(len(linked), 15_683)
         headwords = {r["word"] for r in self.webster}
+        respelled = []
         for r in linked:
-            self.assertEqual(r["definition"].rstrip(".").lower(), f"of {r['base_word']}", r["id"])
+            name = r["definition"].rstrip(".").lower().removeprefix("of ")
+            if "/" in name:  # the name's spelling was restored, as headwords are
+                respelled.append((name, r["base_word"]))
+            else:
+                self.assertEqual(name, r["base_word"], r["id"])
             self.assertIn(r["base_word"], headwords, r["id"])
             self.assertNotEqual(r["base_word"], r["word"], r["id"])
+        self.assertEqual(respelled, [("tracer/y", "tracery")])
         self.assertFalse(any(r["base_word"] for r in self.rows if r["source"] == "oewn"))
         by_id = {r["id"]: r for r in self.webster}
         samples = {

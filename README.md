@@ -68,13 +68,13 @@ Example rows:
 - Removes 93 duplicate rows and 2 empty definitions.
 - Maps 271 of the 293 word-type spellings, including typos such as `supperl.` and `n .`, to the 11 values in `pos`. The original is kept in `wordtype`.
 - Fills in `pos` for 568 rows that have no usable word type, from the abbreviated grammar label Webster's put at the start of the definition instead. For example, `bore` is defined as `imp. of 1st & 2d Bear.`, so its `pos` is `verb`.
-- Links 15,682 word forms to their base word in the new `base_word` column. For example, `abandoned` is defined as `of Abandon`, so its `base_word` is `abandon`.
+- Links 15,683 word forms to their base word in the new `base_word` column. For example, `abandoned` is defined as `of Abandon`, so its `base_word` is `abandon`.
 
 ### Known issues
 
 - 17 Webster's headwords, and some definitions, still contain `/`, mostly where a letter was lost before this data reached OPTED, such as `dou/ted` for *doubted*. The Project Gutenberg text does not confirm a spelling for these, so v2 leaves them as they are.
 - 3,351 Webster's rows have no `pos`: 3,318 have no word type, and 33 have one that is not a part of speech, such as `m.` or `See`. v2 fills in `pos` only from a grammar label in Webster's abbreviations at the start of the definition, and does not guess the rest. Some of these rows name the form in plain words instead, such as `the preterit of Eat`.
-- 224 Webster's word forms whose whole definition is `of` and a word have no `base_word`: 108 name themselves (`apparatus`, `of Apparatus`), 96 have a broken headword such as `-ances`, and 20 name something that is not a single headword (`of Jump, to leap`). Word forms whose definition starts with a grammar label, such as `turves`, `pl. of Turf.`, are not linked either.
+- 223 Webster's word forms whose whole definition is `of` and a word have no `base_word`: 108 name themselves (`apparatus`, `of Apparatus`), 96 have a broken headword such as `-ances`, and 19 name something that is not a single headword (`of Jump, to leap`). Word forms whose definition starts with a grammar label, such as `turves`, `pl. of Turf.`, are not linked either.
 - Open English WordNet examples belong to the whole synonym group, so an example can use a synonym instead of the headword.
 
 ### Rebuild
