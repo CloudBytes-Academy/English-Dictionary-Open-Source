@@ -147,20 +147,25 @@ HEADWORD_FIXES = {
 # Some rows have no word type, and Webster's put the grammar label at the
 # start of the definition instead: "imp. of Bind.", "a. & n. from Flow, v. i.".
 # For rows with no part of speech, read that label with the same rules as
-# word types. Only abbreviations count as a label, and it must be followed by
-# "of" or "from", so a definition such as "A plant of the genus ..." is not
-# one. The rules read four labels wrongly or not at all, so they are listed.
+# word types. A label is grammar abbreviations followed by "of", "from" or
+# "fr.", so a definition such as "A plant of the genus ..." is not one. It may
+# include the words Webster's uses to describe the form, such as "old imp."
+# or "imp. & archaic p. p.", which are dropped before the rules read it.
+# Labels in plain words, such as "the preterit of Eat", are not read.
+LABEL_QUALIFIER = r"(?:the|old|strong|original|archaic|rare|obs\.)"
 DEFINITION_LABEL_RE = re.compile(
-    r"(?:(?:(?:imp|pret|pres|indic|p|pr|pl|sing|compar|superl|a|n|vb|obs|pers)\.|(?:1st|2d|3d)\.?|&\.?|a(?= &))[ ,]*)+"
-    r"(?=(?:of|from)\b)",
+    r"(?:\.\s+)?"  # one row starts with a stray ". ": ". imp. & p. p. of Read."
+    r"(?:(?:" + LABEL_QUALIFIER + r"|(?:imp|pret|pres|indic|p|pr|pl|sing|compar|superl|a|n|vb|pers|per)\.|(?:1st|2d|3d)\.?|&\.?|a(?= &))[ ,]*)+"
+    r"(?=of\b|from\b|fr\.)",
     re.I,
 )
+# The rules read these labels wrongly or not at all.
 LABEL_POS = {
     "pret.": "verb",
     "pl. pres.": "verb",  # "witen": "pl. pres. of Wit", a verb, not a plural noun
-    "obs. 3d pers. sing. pres.": "verb",
     "1st & 3d pers. sing. pres.": "verb",
 }
+
 
 def unescape_sql(s: str) -> str:
     return re.sub(r"\\(.)", lambda m: ESCAPES.get(m.group(1), m.group(1)), s)
@@ -197,8 +202,10 @@ def definition_label_pos(definition: str) -> str | None:
     match = DEFINITION_LABEL_RE.match(definition)
     if match is None:
         return None
-    label = match.group(0).strip(" ,")
+    label = match.group(0).lower().removeprefix(". ")
+    label = re.sub(r"\b" + LABEL_QUALIFIER + r"\s*", "", label).strip(" ,")
     return LABEL_POS.get(label) or webster_pos(label)
+
 
 def load_webster() -> tuple[list[dict], Counter]:
     sql = WEBSTER_DUMP.read_text(encoding="latin-1")

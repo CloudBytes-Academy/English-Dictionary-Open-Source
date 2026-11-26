@@ -112,11 +112,13 @@ class V2Test(unittest.TestCase):
         self.assertEqual(hobble, {"verb", "noun"})
 
     def test_pos_from_definition_labels(self):
-        # 547 rows have no usable word type, so pos comes from the grammar
-        # label at the start of the definition, such as "imp. of Bind.".
+        # 562 rows get pos from the grammar label at the start of the
+        # definition, such as "imp. of Bind.". 559 of them have no word type,
+        # counted here. The other 3 have a word type that is not a part of
+        # speech, such as "writ", whose word type is "obs.".
         no_type = [r for r in self.webster if r["wordtype"] is None]
         self.assertEqual(Counter(r["pos"] for r in no_type if r["pos"]), {
-            "verb": 427, "adjective": 110, "noun": 7,
+            "verb": 439, "adjective": 113, "noun": 7,
         })
         by_id = {r["id"]: r for r in self.webster}
         samples = {
@@ -124,13 +126,16 @@ class V2Test(unittest.TestCase):
             "webster1913-173987": ("witen", "verb"),  # pl. pres. of Wit.
             "webster1913-163871": ("turves", "noun"),  # pl. of Turf.
             "webster1913-141686": ("simpering", "adjective"),  # a. &. n. from Simper, v.
+            "webster1913-139648": ("shalt", "verb"),  # 2d per. sing. of Shall.
+            "webster1913-174930": ("wrote", "verb"),  # imp. & archaic p. p. of Write.
+            "webster1913-149934": ("stont", None),  # 3d pers. sing. present of Stand.
             "webster1913-094770": ("medievalism", None),  # Alt. of Medievalist
             "webster1913-016509": ("black letter", None),  # no label
         }
         for row_id, expected in samples.items():
             with self.subTest(row_id=row_id):
                 self.assertEqual((by_id[row_id]["word"], by_id[row_id]["pos"]), expected)
-        self.assertEqual(sum(r["pos"] is None for r in self.webster), 3_372)
+        self.assertEqual(sum(r["pos"] is None for r in self.webster), 3_357)
 
     def test_no_duplicate_webster_rows(self):
         keys = Counter((r["word"], r["wordtype"], r["definition"]) for r in self.webster)
