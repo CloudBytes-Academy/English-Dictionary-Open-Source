@@ -103,6 +103,16 @@ python3 scripts/local_ci.py --no-signoff  # the same checks, no status
 
 It fails if the rebuild changes anything in `v2/`. When every check passes, it posts a `signoff` status on the tested commit. A signoff covers one commit, so run it again after you push more commits. The script refuses to sign off when the worktree is dirty, when `HEAD` changes during the run, or when GitHub does not have the commit. The status description says `without MariaDB` when `MYSQL_HOST` is not set. It does not run the network tests.
 
+A pull request into `main` cannot merge until its latest commit has a passing `signoff`.
+
+Merging on GitHub always creates a new commit on `main`, whichever merge button you use, and that commit has no signoff yet. So after you merge, sign off `main` too:
+
+```bash
+git switch main
+git pull
+python3 scripts/local_ci.py
+```
+
 ## v1
 
 The v1 dictionary has 3 fields
