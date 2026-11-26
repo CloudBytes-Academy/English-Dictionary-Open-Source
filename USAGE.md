@@ -58,7 +58,7 @@ print(len(rows), "rows")
 print(rows[56])  # {'word': 'abandoned', 'wordtype': 'imp. & p. p.', 'definition': 'of Abandon'}
 ```
 
-The v1 files have some known problems that v2 fixes. For example, 224 words show up as `#NAME?`.
+The v1 files have some known problems that v2 fixes. For example, a spreadsheet turned 224 words into `#NAME?` in the CSV file, the only words there that are not lowercase. The SQLite file stores them as `#name?`.
 
 ### SQLite3
 
