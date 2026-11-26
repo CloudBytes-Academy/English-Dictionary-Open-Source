@@ -150,12 +150,13 @@ HEADWORD_FIXES = {
 # word types. A label is grammar abbreviations followed by "of", "from" or
 # "fr.", so a definition such as "A plant of the genus ..." is not one. It may
 # include the words Webster's uses to describe the form, such as "old imp."
-# or "imp. & archaic p. p.", which are dropped before the rules read it.
-# Labels in plain words, such as "the preterit of Eat", are not read.
-LABEL_QUALIFIER = r"(?:the|old|strong|original|archaic|rare|obs\.)"
+# or "imp. & archaic p. p.", which are dropped before the rules read it, and
+# brackets or slashes, as in "imp. (/ rare p. p.) of Smite.". Labels in plain
+# words, such as "the preterit of Eat", are not read.
+LABEL_QUALIFIER = r"(?:the|old|strong|original|archaic|rare|poet\.|obs\.)"
 DEFINITION_LABEL_RE = re.compile(
-    r"(?:\.\s+)?"  # one row starts with a stray ". ": ". imp. & p. p. of Read."
-    r"(?:(?:" + LABEL_QUALIFIER + r"|(?:imp|pret|pres|indic|p|pr|pl|sing|compar|superl|a|n|vb|pers|per)\.|(?:1st|2d|3d)\.?|&\.?|a(?= &))[ ,]*)+"
+    r"(?:\.\s+)?\(?"  # one row starts with a stray ". ": ". imp. & p. p. of Read."
+    r"(?:(?:" + LABEL_QUALIFIER + r"|(?:imp|pret|pres|indic|p|pr|pl|sing|compar|superl|a|n|vb|pers|per)\.|(?:1st|2d|3d)\.?|&\.?|or|a(?= &))[ ,/()]*)+"
     r"(?=of\b|from\b|fr\.)",
     re.I,
 )
@@ -203,7 +204,8 @@ def definition_label_pos(definition: str) -> str | None:
     if match is None:
         return None
     label = match.group(0).lower().removeprefix(". ")
-    label = re.sub(r"\b" + LABEL_QUALIFIER + r"\s*", "", label).strip(" ,")
+    label = re.sub(r"\b" + LABEL_QUALIFIER + r"\s*|[()/]", " ", label)
+    label = " ".join(label.split()).strip(" ,")
     return LABEL_POS.get(label) or webster_pos(label)
 
 
