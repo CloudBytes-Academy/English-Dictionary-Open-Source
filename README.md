@@ -66,11 +66,12 @@ Example rows:
 - Repairs 37 headwords, in 43 rows, that had a `/` in place of a lost letter or a stray mark. Each one now has the spelling in the Project Gutenberg text. For example, `assaf/tida` becomes `assafoetida`, and `cr/che` becomes `creche`. The Gutenberg text mostly writes ligatures as two letters and drops accents, so the restored words do too. The exception is `globigerinæ`, which Gutenberg prints with `æ`.
 - Removes 93 duplicate rows and 2 empty definitions.
 - Maps 271 of the 293 word-type spellings, including typos such as `supperl.` and `n .`, to the 11 values in `pos`. The original is kept in `wordtype`.
+- Fills in `pos` for 547 rows that have no usable word type, from the grammar label Webster's put at the start of the definition instead. For example, `bore` is defined as `imp. of 1st & 2d Bear.`, so its `pos` is `verb`.
 
 ### Known issues
 
 - 17 Webster's headwords, and some definitions, still contain `/`, mostly where a letter was lost before this data reached OPTED, such as `dou/ted` for *doubted*. The Project Gutenberg text does not confirm a spelling for these, so v2 leaves them as they are.
-- 3,919 Webster's rows have no `pos`: 3,882 have no word type, and 37 have one that is not a part of speech, such as `obs.` or `See`.
+- 3,372 Webster's rows have no `pos`: 3,338 have no word type, and 34 have one that is not a part of speech, such as `obs.` or `See`. Their definitions don't start with a grammar label either, and v2 does not guess.
 - About 16,000 Webster's rows are inflected forms whose definition only names the base word, such as `abandoned`, `imp. & p. p.`, `of Abandon`.
 - Open English WordNet examples belong to the whole synonym group, so an example can use a synonym instead of the headword.
 
