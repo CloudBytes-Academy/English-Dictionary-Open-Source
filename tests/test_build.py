@@ -29,7 +29,7 @@ class PartOfSpeechTest(unittest.TestCase):
             "a.": "adjective", "p. a.": "adjective", "superl.": "adjective",
             "compar.": "adjective", "adv.": "adverb", "prep.": "preposition",
             "conj.": "conjunction", "pron.": "pronoun", "interj.": "interjection",
-            "pref.": "prefix", "suffix": "suffix", "definite article": "article",
+            "pref.": "prefix", "suffix.": "suffix", "definite article.": "article",
         })
 
     def test_typos_in_the_source(self):
@@ -64,7 +64,8 @@ class EncodingRepairTest(unittest.TestCase):
     def test_garbled_characters(self):
         # Counts in the dump: ° 67 times, £ 6, ÷ 2, and the √ byte 11.
         self.assert_repaired({
-            "at 80Â¡;": "at 80°;", "Â£5": "£5", "6 Ã\x96 2": "6 ÷ 2", "Ã\x832": "√2",
+            "at 80Â¡;": "at 80°;", "Â£150": "£150",
+            "the sign of division Ã\x96,": "the sign of division ÷,", "Ã\x832": "√2",
         })
 
     def test_section_sign(self):
