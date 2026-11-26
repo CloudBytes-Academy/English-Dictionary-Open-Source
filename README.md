@@ -105,7 +105,7 @@ It fails if the rebuild changes anything in `v2/`. When every check passes, it p
 
 A pull request into `main` cannot merge until its latest commit has a passing `signoff`.
 
-Merging on GitHub always creates a new commit on `main`, whichever merge button you use, and that commit has no signoff yet. So after you merge, sign off `main` too:
+Merging on GitHub always adds new commits to `main`, whichever merge button you use, and they have no signoff yet. So after you merge, sign off the latest commit on `main` too:
 
 ```bash
 git switch main
