@@ -29,7 +29,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TESTS = [
-    "uv", "run", "--with", "pyarrow>=15", "--with", "duckdb", "--with", "pandas",
+    "uv", "run", "--with-requirements", "tests/requirements.txt",
     "python", "-m", "unittest", "discover", "tests",
 ]
 

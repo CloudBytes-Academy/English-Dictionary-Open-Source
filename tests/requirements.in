@@ -1,0 +1,9 @@
+# The packages the tests use. tests/requirements.txt pins the exact version of
+# each one, and of everything they depend on. After you edit this file, update
+# it with:
+#   uv pip compile --universal --python-version 3.10 tests/requirements.in -o tests/requirements.txt
+
+# The same version the build pins in scripts/build_v2.py.
+pyarrow==25.0.1
+duckdb
+pandas
