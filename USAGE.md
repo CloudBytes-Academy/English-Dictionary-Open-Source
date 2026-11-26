@@ -33,54 +33,52 @@ with gzip.open("v2/dictionary.jsonl.gz", "rt", encoding="utf-8") as file:
 
 ### CSV
 
-To import in a file object, we recommend using DictReader
+The CSV file needs only the Python standard library. Each row has three columns: `word`, `wordtype` and `definition`. Words are lowercase.
+
+Look up one word:
 
 ```python
-from csv import DictReader
+import csv
 
-data = []
-with open("csv/dictionary.csv") as file:
-    rows = DictReader(file)
-    for row in rows:
-        data.append(row)
-        
-# produces a list of dictionaries where each element is organised as
-# {"word":"word", "wordtype": "type of word", "definition": "definition of word"}
-print(data) 
+with open("csv/dictionary.csv", encoding="utf-8", newline="") as file:
+    for row in csv.DictReader(file):
+        if row["word"] == "computer":
+            print(row["wordtype"], row["definition"])
 ```
 
-However, you can also use a generic CSV reader to import the data as a list of lists
+Or load every row into a list, with one dictionary per row:
 
 ```python
-from csv import reader
+import csv
 
-data = []
-with open("csv/dictionary.csv") as file:
-    rows = reader(file)
-    for row in rows:
-        data.append(row)
-        
-# produces a list of lists where each element is organised as
-# [word, wordtype, definition]
-print(data) 
+with open("csv/dictionary.csv", encoding="utf-8", newline="") as file:
+    rows = list(csv.DictReader(file))
+
+print(len(rows), "rows")
+print(rows[56])  # {'word': 'abandoned', 'wordtype': 'imp. & p. p.', 'definition': 'of Abandon'}
 ```
+
+The v1 files have some known problems that v2 fixes. For example, 224 words show up as `#NAME?`.
 
 ### SQLite3
 
-To import in a python script using SQLite3 library, follow the instructions below
+The SQLite file also needs only the Python standard library. It has one table, `entries`, with the same three columns as the CSV file.
+
+Look up one word:
 
 ```python
-import sqlite3 as SQL
+import sqlite3
 
-conn = SQL.connect("sqlite3/dictionary.db") #Or change to other path-to-.db-file
-db = conn.cursor()
+connection = sqlite3.connect("sqlite3/dictionary.db")
 
-# Sample Usage
-db.execute("SELECT * from entries")
-output = db.fetchall()
-print(output)
-db.close()
+query = "SELECT wordtype, definition FROM entries WHERE word = ?"
+for wordtype, definition in connection.execute(query, ("computer",)):
+    print(wordtype, definition)
+
+connection.close()
 ```
+
+The `?` stands for the word you look up. Passing the word separately, as `("computer",)`, is safer than pasting it into the query text. The table has an index on `word`, so the lookup is fast. Words are lowercase, so look them up in lowercase too.
 
 ## DuckDB
 
