@@ -43,12 +43,13 @@ Find the [usage instructions here](USAGE.md).
 | `examples` | list of strings | Example sentences. Empty for Webster's rows. |
 | `synset_id` | string or null | Open English WordNet synset (group of synonyms). Rows with the same `synset_id` are synonyms. Null for Webster's rows. |
 | `source` | string | `webster1913` or `oewn`. |
+| `base_word` | string or null | For a Webster's word form whose whole definition names its base word, that base word in lowercase. For example, `abandoned` is defined as `of Abandon`, so its `base_word` is `abandon`. Null for every other row. |
 
 Example rows:
 
 ```json
-{"id":"webster1913-031182","word":"computer","pos":"noun","wordtype":"n.","definition":"One who computes.","examples":[],"synset_id":null,"source":"webster1913"}
-{"id":"oewn-computer__1.06.00..","word":"computer","pos":"noun","wordtype":null,"definition":"a machine for performing calculations automatically","examples":[],"synset_id":"oewn-03086983-n","source":"oewn"}
+{"id":"webster1913-031182","word":"computer","pos":"noun","wordtype":"n.","definition":"One who computes.","examples":[],"synset_id":null,"source":"webster1913","base_word":null}
+{"id":"oewn-computer__1.06.00..","word":"computer","pos":"noun","wordtype":null,"definition":"a machine for performing calculations automatically","examples":[],"synset_id":"oewn-03086983-n","source":"oewn","base_word":null}
 ```
 
 ### Contents
@@ -67,12 +68,13 @@ Example rows:
 - Removes 93 duplicate rows and 2 empty definitions.
 - Maps 271 of the 293 word-type spellings, including typos such as `supperl.` and `n .`, to the 11 values in `pos`. The original is kept in `wordtype`.
 - Fills in `pos` for 568 rows that have no usable word type, from the abbreviated grammar label Webster's put at the start of the definition instead. For example, `bore` is defined as `imp. of 1st & 2d Bear.`, so its `pos` is `verb`.
+- Links 15,682 word forms to their base word in the new `base_word` column. For example, `abandoned` is defined as `of Abandon`, so its `base_word` is `abandon`.
 
 ### Known issues
 
 - 17 Webster's headwords, and some definitions, still contain `/`, mostly where a letter was lost before this data reached OPTED, such as `dou/ted` for *doubted*. The Project Gutenberg text does not confirm a spelling for these, so v2 leaves them as they are.
 - 3,351 Webster's rows have no `pos`: 3,318 have no word type, and 33 have one that is not a part of speech, such as `m.` or `See`. v2 fills in `pos` only from a grammar label in Webster's abbreviations at the start of the definition, and does not guess the rest. Some of these rows name the form in plain words instead, such as `the preterit of Eat`.
-- About 16,000 Webster's rows are inflected forms whose definition only names the base word, such as `abandoned`, `imp. & p. p.`, `of Abandon`.
+- 224 Webster's word forms whose whole definition is `of` and a word have no `base_word`: 108 name themselves (`apparatus`, `of Apparatus`), 96 have a broken headword such as `-ances`, and 20 name something that is not a single headword (`of Jump, to leap`). Word forms whose definition starts with a grammar label, such as `turves`, `pl. of Turf.`, are not linked either.
 - Open English WordNet examples belong to the whole synonym group, so an example can use a synonym instead of the headword.
 
 ### Rebuild

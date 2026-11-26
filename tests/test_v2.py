@@ -57,6 +57,7 @@ class V2Test(unittest.TestCase):
             pa.field("examples", pa.list_(pa.string()), nullable=False),
             pa.field("synset_id", pa.string()),
             pa.field("source", pa.string(), nullable=False),
+            pa.field("base_word", pa.string()),
         ])
         self.assertEqual(pq.read_schema(V2 / "dictionary.parquet").remove_metadata(), expected)
 
@@ -140,6 +141,28 @@ class V2Test(unittest.TestCase):
             with self.subTest(row_id=row_id):
                 self.assertEqual((by_id[row_id]["word"], by_id[row_id]["pos"]), expected)
         self.assertEqual(sum(r["pos"] is None for r in self.webster), 3_351)
+
+    def test_base_word(self):
+        # Word forms whose whole definition is "of" and another headword,
+        # such as "abandoned", "of Abandon", link to that headword.
+        linked = [r for r in self.webster if r["base_word"] is not None]
+        self.assertEqual(len(linked), 15_682)
+        headwords = {r["word"] for r in self.webster}
+        for r in linked:
+            self.assertEqual(r["definition"].rstrip(".").lower(), f"of {r['base_word']}", r["id"])
+            self.assertIn(r["base_word"], headwords, r["id"])
+            self.assertNotEqual(r["base_word"], r["word"], r["id"])
+        self.assertFalse(any(r["base_word"] for r in self.rows if r["source"] == "oewn"))
+        by_id = {r["id"]: r for r in self.webster}
+        samples = {
+            "webster1913-000057": "abandon",  # abandoned, "of Abandon"
+            "webster1913-163871": None,  # turves, "pl. of Turf.": not only "of", so no link
+            "webster1913-044438": None,  # -ances, "of Discrepancy": broken headword
+            "webster1913-012269": "ballista",  # ballist/, "of Ballista"
+        }
+        for row_id, base in samples.items():
+            with self.subTest(row_id=row_id):
+                self.assertEqual(by_id[row_id]["base_word"], base)
 
     def test_no_duplicate_webster_rows(self):
         keys = Counter((r["word"], r["wordtype"], r["definition"]) for r in self.webster)
