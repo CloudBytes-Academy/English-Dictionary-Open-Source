@@ -3,7 +3,7 @@
 An open source English language dictionary in CSV, SQLite, MySQL, JSONL, and Parquet.
 
 - **v2** (2026): 388,587 definitions of 221,500 words. It combines the public-domain 1913 Webster's Unabridged Dictionary with modern words from [Open English WordNet](https://github.com/globalwordnet/english-wordnet) 2025+, a free, maintained word database. JSONL and Parquet.
-- **v1** (2021): 176,023 definitions of 111,573 words from the 1913 Webster's only. CSV, SQLite, and MySQL. These files are unchanged.
+- **v1** (2021): 176,023 definitions of 111,717 words from the 1913 Webster's only. CSV, SQLite, and MySQL. These files are unchanged, so the CSV and SQLite files still show 145 of those words as `#NAME?`.
 
 ## Getting Started
 

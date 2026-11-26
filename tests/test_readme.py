@@ -68,7 +68,12 @@ class ReadmeFiguresTest(unittest.TestCase):
             "v2 definitions": len(rows),
             "v2 words": len(webster_words | {r["word"].casefold() for r in oewn}),
             "v1 definitions": len(v1),
-            "v1 words": len({r["word"] for r in v1}),
+            # The dump, because the CSV and SQLite files show 145 words as "#NAME?".
+            "v1 words": len({row["word"].lower() for row in dump}),
+            "v1 words shown as #NAME?": len({
+                dump[number_ - 1]["word"].lower() for number_, row in enumerate(v1, 1)
+                if row["word"] == "#NAME?"
+            }),
             "Webster's rows": len(webster),
             "WordNet rows": len(oewn),
             "words only in WordNet": len(only_oewn),
@@ -112,6 +117,7 @@ class ReadmeFiguresTest(unittest.TestCase):
         "v2 words": r"\*\*v2\*\* \(2026\): [\d,]+ definitions of ([\d,]+) words",
         "v1 definitions": r"\*\*v1\*\* \(2021\): ([\d,]+) definitions of",
         "v1 words": r"\*\*v1\*\* \(2021\): [\d,]+ definitions of ([\d,]+) words",
+        "v1 words shown as #NAME?": r"still show ([\d,]+) of those words as `#NAME\?`",
         "Webster's rows": r"\| Webster's 1913 \| ([\d,]+) \|",
         "WordNet rows": r"\| Open English WordNet 2025\+ \| ([\d,]+) \|",
         "words only in WordNet": r"Adds ([\d,]+) words that Webster's does not have",
