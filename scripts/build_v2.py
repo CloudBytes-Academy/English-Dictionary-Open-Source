@@ -93,6 +93,56 @@ POS_RULES = [
 ]
 POS_RULES = [(re.compile(p), pos) for p, pos in POS_RULES]
 
+# Headwords where a letter was lost before the data reached OPTED, so the
+# dump has "/" in its place. Each correction is the spelling in the Project
+# Gutenberg text of the 1913 Webster's (ebook 29765), found by matching the
+# row's definition to its Gutenberg entry. Gutenberg prints ligatures as two
+# letters and drops accents ("ASSAFOETIDA", "CRECHE"), so these do too.
+# Where an entry gives two spellings, the dump's other rows decide which one
+# the slash stands for: "melibean" is a separate row, "Alt. of Melib/an", so
+# "melib/an" is "meliboean". Some slashes stood for no letter at all, only a
+# stress mark, as in "cor/niculate". The other headwords with "/" stay as they
+# are, because the Gutenberg text does not confirm a spelling, as in "pl. Ballist.".
+HEADWORD_FIXES = {
+    "adder fly/": "adder fly",
+    "alen/on lace": "alencon lace",
+    "assaf/tida": "assafoetida",
+    "cor/niculate": "corniculate",
+    "cr/che": "creche",
+    "dendroc/la": "dendrocoela",
+    "feather-brained/": "feather-brained",
+    "feather-edge/": "feather-edge",
+    "feather-edged/": "feather-edged",
+    "feather-few/": "feather-few",
+    "fedaliza/tion": "feudalization",  # Gutenberg "Feu*dal*i*za/tion": the dump also lost the "u"
+    "gairish/ness": "gairishness",
+    "globigerin/": "globigerin\u00e6",  # Gutenberg: "pl. Globigerinae" with the ae ligature
+    "lav/sium": "lavoesium",
+    "lima/on": "limacon",
+    "m/tin": "matin",
+    "melib/an": "meliboean",
+    "melop/ia": "melopoeia",
+    "mesam/boid": "mesamoeboid",
+    "mesogl/a": "mesogloea",
+    "mesophl/um": "mesophloeum",
+    "orthopn/a": "orthopnoea",
+    "otorrh/a": "otorrhoea",
+    "pound/keeper": "poundkeeper",
+    "precogita/tion": "precogitation",
+    "prosopop/ia": "prosopopoeia",
+    "proven/al": "provencal",
+    "rh/tian": "rhaetian",
+    "rh/tic": "rhaetic",
+    "rh/tizite": "rhaetizite",
+    "shortened /": "shortened",
+    "tox/mia": "toxaemia",
+    "tracer/y": "tracery",
+    "tri/cia": "trioecia",
+    "tri/cious": "trioecious",
+    "vouch/or": "vouchor",
+    "zu/is": "zunis",
+}
+
 
 def unescape_sql(s: str) -> str:
     return re.sub(r"\\(.)", lambda m: ESCAPES.get(m.group(1), m.group(1)), s)
@@ -138,6 +188,9 @@ def load_webster() -> tuple[list[dict], Counter]:
             stats["webster_dropped_empty"] += 1
             continue
         word = word.lower()
+        if word in HEADWORD_FIXES:
+            word = HEADWORD_FIXES[word]
+            stats["webster_headword_restored"] += 1
         key = (word, wordtype, definition)
         if key in seen:
             stats["webster_dropped_duplicate"] += 1

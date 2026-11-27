@@ -125,6 +125,21 @@ class V2Test(unittest.TestCase):
                 self.assertIsNone(r["wordtype"], r["id"])
                 self.assertIsNotNone(r["synset_id"], r["id"])
 
+    def test_slashed_headwords(self):
+        # 43 rows got their spelling back from the Gutenberg text. These 17
+        # headwords keep their "/", because the Gutenberg text does not confirm a spelling.
+        slashed = sorted({r["word"] for r in self.webster if "/" in r["word"]})
+        self.assertEqual(slashed, [
+            "ballist/", "basilic/", "di/////", "di/planted", "dou/ted", "emyd//",
+            "eying / eyeing", "glabell/", "gloss/", "gonothec/",
+            "nuch/", "nudge/", "nymph/", "prepare/", "pseudofilari/", "pup/", "review/d",
+        ])
+        restored = {r["id"]: r["word"] for r in self.webster}
+        self.assertEqual(
+            [restored[f"webster1913-{n:06d}"] for n in (9661, 35948, 66471, 95027, 121954)],
+            ["assafoetida", "creche", "globigerin\u00e6", "meliboean", "provencal"],
+        )
+
     def test_modern_words_present(self):
         oewn = {r["word"] for r in self.rows if r["source"] == "oewn"}
         self.assertTrue({"smartphone", "email", "blog", "internet"} <= oewn)

@@ -50,6 +50,7 @@ V1_V2_DIFFERENCES = {
     "wordtype empty -> null": 3_882,
     "definition whitespace collapsed": 75_489,
     "definition encoding repaired": 72,
+    "headword slash restored": 43,
 }
 
 
@@ -59,6 +60,50 @@ SAMPLE_WORD = "computer"
 
 def squash(text):
     return " ".join(text.split())
+
+
+# Headwords the dump has with "/" where a letter was lost, and the spelling
+# v2 gives them, from the Project Gutenberg text. Listed here, not imported
+# from the build, so a wrong spelling in the build fails this test.
+RESTORED_HEADWORDS = {
+    "adder fly/": "adder fly",
+    "alen/on lace": "alencon lace",
+    "assaf/tida": "assafoetida",
+    "cor/niculate": "corniculate",
+    "cr/che": "creche",
+    "dendroc/la": "dendrocoela",
+    "feather-brained/": "feather-brained",
+    "feather-edge/": "feather-edge",
+    "feather-edged/": "feather-edged",
+    "feather-few/": "feather-few",
+    "fedaliza/tion": "feudalization",
+    "gairish/ness": "gairishness",
+    "globigerin/": "globigerin\xe6",
+    "lav/sium": "lavoesium",
+    "lima/on": "limacon",
+    "m/tin": "matin",
+    "melib/an": "meliboean",
+    "melop/ia": "melopoeia",
+    "mesam/boid": "mesamoeboid",
+    "mesogl/a": "mesogloea",
+    "mesophl/um": "mesophloeum",
+    "orthopn/a": "orthopnoea",
+    "otorrh/a": "otorrhoea",
+    "pound/keeper": "poundkeeper",
+    "precogita/tion": "precogitation",
+    "prosopop/ia": "prosopopoeia",
+    "proven/al": "provencal",
+    "rh/tian": "rhaetian",
+    "rh/tic": "rhaetic",
+    "rh/tizite": "rhaetizite",
+    "shortened /": "shortened",
+    "tox/mia": "toxaemia",
+    "tracer/y": "tracery",
+    "tri/cia": "trioecia",
+    "tri/cious": "trioecious",
+    "vouch/or": "vouchor",
+    "zu/is": "zunis",
+}
 
 
 def repair(text, row):
@@ -186,6 +231,9 @@ class AgreementTest(unittest.TestCase):
                 continue
             cleaned[tuple(expected.values())] = row
             actual = {field: v2_row[field] for field in FIELDS}
+            if expected["word"] in RESTORED_HEADWORDS:
+                expected["word"] = RESTORED_HEADWORDS[expected["word"]]
+                differences["headword slash restored"] += 1
             if actual != expected:
                 unexpected.append((row, expected, actual))
                 continue
