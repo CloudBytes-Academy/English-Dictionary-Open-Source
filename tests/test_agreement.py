@@ -50,7 +50,7 @@ V1_V2_DIFFERENCES = {
     "wordtype empty -> null": 3_882,
     "definition whitespace collapsed": 75_489,
     "definition encoding repaired": 72,
-    "headword slash restored": 43,
+    "headword slash restored": 56,
 }
 
 
@@ -63,22 +63,29 @@ def squash(text):
 
 
 # Headwords the dump has with "/" where a letter was lost, and the spelling
-# v2 gives them, from the Project Gutenberg text. Listed here, not imported
+# v2 gives them, from the Project Gutenberg text or GCIDE. Listed here, not imported
 # from the build, so a wrong spelling in the build fails this test.
 RESTORED_HEADWORDS = {
     "adder fly/": "adder fly",
     "alen/on lace": "alencon lace",
     "assaf/tida": "assafoetida",
+    "ballist/": "ballistae",
+    "basilic/": "basilicae",
     "cor/niculate": "corniculate",
     "cr/che": "creche",
     "dendroc/la": "dendrocoela",
+    "di/////": "disserved",
+    "di/planted": "displanted",
+    "dou/ted": "doubted",
     "feather-brained/": "feather-brained",
     "feather-edge/": "feather-edge",
     "feather-edged/": "feather-edged",
     "feather-few/": "feather-few",
     "fedaliza/tion": "feudalization",
     "gairish/ness": "gairishness",
+    "glabell/": "glabellae",
     "globigerin/": "globigerin\xe6",
+    "gloss/": "glossae",
     "lav/sium": "lavoesium",
     "lima/on": "limacon",
     "m/tin": "matin",
@@ -87,12 +94,18 @@ RESTORED_HEADWORDS = {
     "mesam/boid": "mesamoeboid",
     "mesogl/a": "mesogloea",
     "mesophl/um": "mesophloeum",
+    "nuch/": "nuchae",
+    "nudge/": "nudged",
+    "nymph/": "nymphae",
     "orthopn/a": "orthopnoea",
     "otorrh/a": "otorrhoea",
     "pound/keeper": "poundkeeper",
     "precogita/tion": "precogitation",
+    "prepare/": "prepared",
     "prosopop/ia": "prosopopoeia",
     "proven/al": "provencal",
+    "pup/": "pupae",
+    "review/d": "reviewed",
     "rh/tian": "rhaetian",
     "rh/tic": "rhaetic",
     "rh/tizite": "rhaetizite",

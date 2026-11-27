@@ -185,18 +185,19 @@ class V2Test(unittest.TestCase):
                 self.assertIsNotNone(r["synset_id"], r["id"])
 
     def test_slashed_headwords(self):
-        # 43 rows got their spelling back from the Gutenberg text. These 17
-        # headwords keep their "/", because the Gutenberg text does not confirm a spelling.
+        # 56 rows got their spelling back from the Gutenberg text or GCIDE.
+        # These 4 headwords keep their "/", because neither source confirms a spelling.
         slashed = sorted({r["word"] for r in self.webster if "/" in r["word"]})
-        self.assertEqual(slashed, [
-            "ballist/", "basilic/", "di/////", "di/planted", "dou/ted", "emyd//",
-            "eying / eyeing", "glabell/", "gloss/", "gonothec/",
-            "nuch/", "nudge/", "nymph/", "prepare/", "pseudofilari/", "pup/", "review/d",
-        ])
+        self.assertEqual(slashed, ["emyd//", "eying / eyeing", "gonothec/", "pseudofilari/"])
         restored = {r["id"]: r["word"] for r in self.webster}
         self.assertEqual(
             [restored[f"webster1913-{n:06d}"] for n in (9661, 35948, 66471, 95027, 121954)],
             ["assafoetida", "creche", "globigerin\u00e6", "meliboean", "provencal"],
+        )
+        # From GCIDE, where the Gutenberg text has the same gap as the dump.
+        self.assertEqual(
+            [restored[f"webster1913-{n:06d}"] for n in (12269, 45597, 47195, 130541)],
+            ["ballistae", "disserved", "doubted", "reviewed"],
         )
 
     def test_modern_words_present(self):
