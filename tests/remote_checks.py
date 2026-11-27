@@ -1,5 +1,5 @@
 """Check the public download URLs. These need network, so run them separately:
-    uv run --with 'pyarrow>=15' --with duckdb --with pandas \
+    uv run --with-requirements tests/requirements.txt \
         python -m unittest discover tests -p 'remote_*.py'
 
 At least 13 public repos download the v1 files by URL. The old UberPython

@@ -79,13 +79,15 @@ The build is reproducible. With the pinned pyarrow version, which uv installs, r
 
 ```bash
 uv run scripts/build_v2.py
-uv run --with 'pyarrow>=15' --with duckdb --with pandas python -m unittest discover tests
+uv run --with-requirements tests/requirements.txt python -m unittest discover tests
 ```
+
+The tests use the exact package versions in `tests/requirements.txt`, so every run tests with the same packages. To change a version, edit `tests/requirements.in` and run the command at the top of that file.
 
 The tests that read the public URLs need network, so they run separately:
 
 ```bash
-uv run --with 'pyarrow>=15' --with duckdb --with pandas python -m unittest discover tests -p 'remote_*.py'
+uv run --with-requirements tests/requirements.txt python -m unittest discover tests -p 'remote_*.py'
 ```
 
 The MariaDB import test runs only when `MYSQL_HOST` names a server. It ignores MariaDB option files, connects over TCP, and also reads `MYSQL_TCP_PORT` (default `3306`), `MYSQL_USER` (default `root`), and `MYSQL_PWD`.
