@@ -144,6 +144,31 @@ HEADWORD_FIXES = {
 }
 
 
+# Some rows have no word type, and Webster's put the grammar label at the
+# start of the definition instead: "imp. of Bind.", "a. & n. from Flow, v. i.".
+# For rows with no part of speech, read that label with the same rules as
+# word types. A label is grammar abbreviations followed by "of", "from",
+# "fr.", the base word alone ("imp. & p. p. Bestick.") or nothing more
+# ("obs. imp. pl."), so a definition such as "A plant of the genus ..." is
+# not one. A label may include the words Webster's uses to describe the form,
+# such as "old imp." or "imp. & archaic p. p.", which are dropped before the
+# rules read it, and brackets or slashes, as in "imp. (/ rare p. p.) of
+# Smite.". Labels in plain words, such as "the preterit of Eat", are not read.
+LABEL_QUALIFIER = r"(?:(?:the|old|strong|original|archaic|rare)\b|poet\.|obs\.)"
+DEFINITION_LABEL_RE = re.compile(
+    r"(?:\.\s+)?\(?"  # one row starts with a stray ". ": ". imp. & p. p. of Read."
+    r"(?:(?:" + LABEL_QUALIFIER + r"|(?:imp|pret|pres|indic|p|pr|pl|sing|compar|superl|a|n|vb|pers|per)\.|(?:1st|2d|3d)\.?|&\.?|or|a(?= &))[ ,/()]*)+"
+    r"(?=of\b|from\b|fr\.|(?-i:[A-Z][a-z]+)\.?$|$)",  # the base word has a capital
+    re.I,
+)
+# The rules read these labels wrongly or not at all.
+LABEL_POS = {
+    "pret.": "verb",
+    "pl. pres.": "verb",  # "witen": "pl. pres. of Wit", a verb, not a plural noun
+    "1st & 3d pers. sing. pres.": "verb",
+}
+
+
 def unescape_sql(s: str) -> str:
     return re.sub(r"\\(.)", lambda m: ESCAPES.get(m.group(1), m.group(1)), s)
 
@@ -175,6 +200,17 @@ def webster_pos(wordtype: str) -> str | None:
     return None
 
 
+def definition_label_pos(definition: str) -> str | None:
+    match = DEFINITION_LABEL_RE.match(definition)
+    if match is None:
+        return None
+    label = match.group(0).lower().removeprefix(". ")
+    label = re.sub(r"\b" + LABEL_QUALIFIER + r"\s*|[()/]", " ", label)
+    label = " ".join(label.split()).strip(" ,")
+    # A qualifier alone is not a label: "The Echinodermata." leaves nothing here.
+    return LABEL_POS.get(label) or webster_pos(label)
+
+
 def load_webster() -> tuple[list[dict], Counter]:
     sql = WEBSTER_DUMP.read_text(encoding="latin-1")
     stats = Counter()
@@ -196,11 +232,15 @@ def load_webster() -> tuple[list[dict], Counter]:
             stats["webster_dropped_duplicate"] += 1
             continue
         seen.add(key)
+        pos = webster_pos(wordtype)
+        if pos is None:
+            pos = definition_label_pos(definition)
+            stats["webster_pos_from_definition"] += pos is not None
         rows.append(
             {
                 "id": f"webster1913-{index:06d}",
                 "word": word,
-                "pos": webster_pos(wordtype),
+                "pos": pos,
                 "wordtype": wordtype or None,
                 "definition": definition,
                 "examples": [],
