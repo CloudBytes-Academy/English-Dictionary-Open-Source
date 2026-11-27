@@ -102,22 +102,33 @@ POS_RULES = [(re.compile(p), pos) for p, pos in POS_RULES]
 # Where an entry gives two spellings, the dump's other rows decide which one
 # the slash stands for: "melibean" is a separate row, "Alt. of Melib/an", so
 # "melib/an" is "meliboean". Some slashes stood for no letter at all, only a
-# stress mark, as in "cor/niculate". The other headwords with "/" stay as they
-# are, because the Gutenberg text does not confirm a spelling, as in "pl. Ballist.".
+# stress mark, as in "cor/niculate". Where the Gutenberg text has the same gap,
+# as in "pl. Ballist.", the spelling comes from GCIDE 0.54, which keeps the 1913
+# markup ("Ballist<ae/"). That covers 13: the plurals ballistae, basilicae,
+# glabellae, glossae, nuchae, nymphae and pupae, and the past tenses disserved,
+# displanted, doubted, nudged, prepared and reviewed. The other headwords with
+# "/" stay as they are, because neither source confirms a spelling.
 HEADWORD_FIXES = {
     "adder fly/": "adder fly",
     "alen/on lace": "alencon lace",
     "assaf/tida": "assafoetida",
+    "ballist/": "ballistae",
+    "basilic/": "basilicae",
     "cor/niculate": "corniculate",
     "cr/che": "creche",
     "dendroc/la": "dendrocoela",
+    "di/////": "disserved",
+    "di/planted": "displanted",
+    "dou/ted": "doubted",
     "feather-brained/": "feather-brained",
     "feather-edge/": "feather-edge",
     "feather-edged/": "feather-edged",
     "feather-few/": "feather-few",
     "fedaliza/tion": "feudalization",  # Gutenberg "Feu*dal*i*za/tion": the dump also lost the "u"
     "gairish/ness": "gairishness",
+    "glabell/": "glabellae",
     "globigerin/": "globigerin\u00e6",  # Gutenberg: "pl. Globigerinae" with the ae ligature
+    "gloss/": "glossae",
     "lav/sium": "lavoesium",
     "lima/on": "limacon",
     "m/tin": "matin",
@@ -126,12 +137,18 @@ HEADWORD_FIXES = {
     "mesam/boid": "mesamoeboid",
     "mesogl/a": "mesogloea",
     "mesophl/um": "mesophloeum",
+    "nuch/": "nuchae",
+    "nudge/": "nudged",
+    "nymph/": "nymphae",
     "orthopn/a": "orthopnoea",
     "otorrh/a": "otorrhoea",
     "pound/keeper": "poundkeeper",
     "precogita/tion": "precogitation",
+    "prepare/": "prepared",
     "prosopop/ia": "prosopopoeia",
     "proven/al": "provencal",
+    "pup/": "pupae",
+    "review/d": "reviewed",
     "rh/tian": "rhaetian",
     "rh/tic": "rhaetic",
     "rh/tizite": "rhaetizite",
