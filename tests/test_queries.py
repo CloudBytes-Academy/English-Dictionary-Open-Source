@@ -21,7 +21,7 @@ import duckdb
 import pandas as pd
 import pyarrow.parquet as pq
 
-from data_contract import RAW_MAIN, ROOT, usage_blocks
+from data_contract import RAW_MAIN, ROOT, usage_remote_query
 
 PARQUET = ROOT / "v2/dictionary.parquet"
 JSONL = ROOT / "v2/dictionary.jsonl.gz"
@@ -177,15 +177,9 @@ class ParquetOverHTTPTest(unittest.TestCase):
         self.addCleanup(server.server_close)
         self.addCleanup(server.shutdown)
 
-        query = usage_blocks("sql")[0]
+        query = usage_remote_query(duckdb.__version__)
         remote = f"{RAW_MAIN}/v2/dictionary.parquet"
         self.assertIn(remote, query)
-        setting = "SET disable_parquet_prefetching = true;\n"
-        self.assertTrue(query.startswith(setting))
-        if int(duckdb.__version__.split(".")[0]) < 2:
-            # USAGE.md says to leave this line out on DuckDB 1.5, where it
-            # makes DuckDB download the whole file.
-            query = query.removeprefix(setting)
         local = f"http://127.0.0.1:{server.server_port}/dictionary.parquet"
         with duckdb.connect() as connection:
             connection.execute("SET enable_http_metadata_cache = false")

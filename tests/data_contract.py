@@ -162,3 +162,19 @@ def usage_blocks(language):
     if not blocks:
         raise AssertionError(f"No {language} blocks found in USAGE.md")
     return blocks
+
+
+PREFETCH_OFF = "SET disable_parquet_prefetching = true;\n"
+
+
+def usage_remote_query(duckdb_version):
+    """Return the USAGE.md query that reads the Parquet file from GitHub, as
+    USAGE.md says to run it on this DuckDB version. Its first line turns off
+    prefetching, and USAGE.md says to leave that line out on DuckDB 1.5 and
+    earlier, where it makes DuckDB download the whole file."""
+    query = usage_blocks("sql")[0]
+    if not query.startswith(PREFETCH_OFF):
+        raise AssertionError(f"The first SQL block in USAGE.md should start with {PREFETCH_OFF!r}")
+    if int(duckdb_version.split(".")[0]) < 2:
+        query = query.removeprefix(PREFETCH_OFF)
+    return query
