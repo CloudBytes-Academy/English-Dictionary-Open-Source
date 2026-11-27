@@ -3,7 +3,7 @@
 An open source English language dictionary in CSV, SQLite, MySQL, JSONL, and Parquet.
 
 - **v2** (2026): 388,587 definitions of 221,500 words. It combines the public-domain 1913 Webster's Unabridged Dictionary with modern words from [Open English WordNet](https://github.com/globalwordnet/english-wordnet) 2025+, a free, maintained word database. JSONL and Parquet.
-- **v1** (2021): 176,023 definitions of 111,573 words from the 1913 Webster's only. CSV, SQLite, and MySQL. These files are unchanged.
+- **v1** (2021): 176,023 definitions of 111,717 words from the 1913 Webster's only. CSV, SQLite, and MySQL. These files are unchanged, so the CSV file still shows 145 of those words as `#NAME?`, and the SQLite file as `#name?`.
 
 ## Getting Started
 
@@ -61,7 +61,7 @@ Example rows:
 
 ### What v2 fixes in the Webster's data
 
-- Restores 224 words, such as `-able` and `-ance`, that a spreadsheet had turned into `#NAME?` in the v1 CSV and SQLite files.
+- Restores 145 words, in 224 rows, such as `-able` and `-ance`, that a spreadsheet had turned into `#NAME?` in the v1 CSV and SQLite files.
 - Repairs garbled characters: `80Â¡` becomes `80°`, and `Ã2` becomes `√2`. Also `£`, `÷`, and `§`.
 - Joins definitions that had hard line breaks onto one line.
 - Repairs 37 headwords, in 43 rows, that had a `/` in place of a lost letter or a stray mark. Each one now has the spelling in the Project Gutenberg text. For example, `assaf/tida` becomes `assafoetida`, and `cr/che` becomes `creche`. The Gutenberg text mostly writes ligatures as two letters and drops accents, so the restored words do too. The exception is `globigerinæ`, which Gutenberg prints with `æ`.
