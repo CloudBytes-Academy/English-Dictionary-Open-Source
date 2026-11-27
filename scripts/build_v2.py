@@ -57,6 +57,7 @@ SCHEMA = pa.schema(
         pa.field("examples", pa.list_(pa.string()), nullable=False),
         pa.field("synset_id", pa.string()),
         pa.field("source", pa.string(), nullable=False),
+        pa.field("base_word", pa.string()),
     ]
 )
 
@@ -200,6 +201,26 @@ def webster_pos(wordtype: str) -> str | None:
     return None
 
 
+# Word forms whose whole definition names the base word: "abandoned" is
+# defined as "of Abandon". base_word links them to it, but only when the name
+# is another Webster's headword. The name gets the same spelling fixes as
+# headwords, so "traceries", "of Tracer/y", links to "tracery". Headwords that
+# begin with "-", such as "-ances" ("of Discrepancy"), were broken before the
+# data reached OPTED, so they get no link.
+BASE_WORD_RE = re.compile(r"of (\S.*?)\.?")
+
+
+def add_base_words(rows: list[dict], stats: Counter) -> None:
+    headwords = {row["word"] for row in rows}
+    for row in rows:
+        match = BASE_WORD_RE.fullmatch(row["definition"])
+        base = match.group(1).lower() if match else None
+        base = HEADWORD_FIXES.get(base, base)
+        if base in headwords and base != row["word"] and not row["word"].startswith("-"):
+            row["base_word"] = base
+            stats["webster_base_word"] += 1
+
+
 def definition_label_pos(definition: str) -> str | None:
     match = DEFINITION_LABEL_RE.match(definition)
     if match is None:
@@ -246,9 +267,11 @@ def load_webster() -> tuple[list[dict], Counter]:
                 "examples": [],
                 "synset_id": None,
                 "source": "webster1913",
+                "base_word": None,
                 "_seq": index,
             }
         )
+    add_base_words(rows, stats)
     return rows, stats
 
 
@@ -303,6 +326,7 @@ def load_oewn() -> tuple[list[dict], Counter]:
                     "examples": examples,
                     "synset_id": synset_id,
                     "source": "oewn",
+                    "base_word": None,
                     "_seq": len(rows),
                 }
             )

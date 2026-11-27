@@ -16,7 +16,7 @@ class JSONLTest(unittest.TestCase):
 
     def test_structure(self):
         required = {"id", "word", "definition", "source"}
-        optional = {"pos", "wordtype", "synset_id"}
+        optional = {"pos", "wordtype", "synset_id", "base_word"}
         for row in self.rows:
             self.assertEqual(set(row), required | optional | {"examples"})
             self.assertTrue(all(isinstance(row[key], str) for key in required))
