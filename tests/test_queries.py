@@ -21,7 +21,7 @@ import duckdb
 import pandas as pd
 import pyarrow.parquet as pq
 
-from data_contract import RAW_MAIN, ROOT, usage_blocks
+from data_contract import RAW_MAIN, ROOT, usage_remote_query
 
 PARQUET = ROOT / "v2/dictionary.parquet"
 JSONL = ROOT / "v2/dictionary.jsonl.gz"
@@ -164,7 +164,7 @@ class ParquetOverHTTPTest(unittest.TestCase):
     """The USAGE.md query reads a small part of the file over HTTP.
 
     Readers skip blocks of rows by their min/max statistics. A layout change
-    that defeats this makes DuckDB fetch the whole 18.5 MB file.
+    that defeats this makes DuckDB fetch the whole 18.6 MB file.
     """
 
     BUDGET = 3_000_000
@@ -177,7 +177,7 @@ class ParquetOverHTTPTest(unittest.TestCase):
         self.addCleanup(server.server_close)
         self.addCleanup(server.shutdown)
 
-        query = usage_blocks("sql")[0]
+        query = usage_remote_query(duckdb.__version__)
         remote = f"{RAW_MAIN}/v2/dictionary.parquet"
         self.assertIn(remote, query)
         local = f"http://127.0.0.1:{server.server_port}/dictionary.parquet"

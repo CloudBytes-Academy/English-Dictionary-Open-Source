@@ -13,7 +13,7 @@ import urllib.request
 
 import duckdb
 
-from data_contract import RAW_MAIN, V1_HASHES, usage_blocks
+from data_contract import RAW_MAIN, V1_HASHES, usage_remote_query
 
 OLD_REPO = "UberPython/English-Dictionary-Open-Source"
 NEW_REPO = "CloudBytes-Academy/English-Dictionary-Open-Source"
@@ -45,7 +45,7 @@ class RemoteAccessTest(unittest.TestCase):
         self.assertEqual((status, url), (200, f"https://github.com/{NEW_REPO}"))
 
     def test_duckdb_reads_parquet_over_https(self):
-        query = usage_blocks("sql")[0]
+        query = usage_remote_query(duckdb.__version__)
         self.assertIn(f"{RAW_MAIN}/v2/dictionary.parquet", query)
         rows = duckdb.sql(query).fetchall()
         self.assertEqual(

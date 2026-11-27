@@ -82,9 +82,10 @@ The `?` stands for the word you look up. Passing the word separately, as `("comp
 
 ## DuckDB
 
-[DuckDB](https://duckdb.org/) queries the Parquet file with SQL, from disk or straight from GitHub. Over HTTP it downloads only the parts of the file it needs.
+[DuckDB](https://duckdb.org/) queries the Parquet file with SQL, from disk or straight from GitHub. Over HTTP it downloads only the parts of the file it needs. The first line keeps that download small on DuckDB 2.0 and later: without it, DuckDB reads ahead and downloads about 11 MB of the 18.6 MB file, instead of about 2 MB. On DuckDB 1.5 or earlier, leave the first line out, because there it downloads the whole file.
 
 ```sql
+SET disable_parquet_prefetching = true;
 SELECT word, pos, definition, source
 FROM 'https://raw.githubusercontent.com/CloudBytes-Academy/English-Dictionary-Open-Source/main/v2/dictionary.parquet'
 WHERE lower(word) = 'email';
