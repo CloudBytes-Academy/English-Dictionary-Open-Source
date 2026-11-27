@@ -164,7 +164,7 @@ class ParquetOverHTTPTest(unittest.TestCase):
     """The USAGE.md query reads a small part of the file over HTTP.
 
     Readers skip blocks of rows by their min/max statistics. A layout change
-    that defeats this makes DuckDB fetch the whole 18.5 MB file.
+    that defeats this makes DuckDB fetch the whole 18.6 MB file.
     """
 
     BUDGET = 3_000_000
@@ -180,6 +180,12 @@ class ParquetOverHTTPTest(unittest.TestCase):
         query = usage_blocks("sql")[0]
         remote = f"{RAW_MAIN}/v2/dictionary.parquet"
         self.assertIn(remote, query)
+        setting = "SET disable_parquet_prefetching = true;\n"
+        self.assertTrue(query.startswith(setting))
+        if int(duckdb.__version__.split(".")[0]) < 2:
+            # USAGE.md says to leave this line out on DuckDB 1.5, where it
+            # makes DuckDB download the whole file.
+            query = query.removeprefix(setting)
         local = f"http://127.0.0.1:{server.server_port}/dictionary.parquet"
         with duckdb.connect() as connection:
             connection.execute("SET enable_http_metadata_cache = false")
